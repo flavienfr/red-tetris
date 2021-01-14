@@ -1,0 +1,10 @@
+version: '3'
+services:
+  web:
+    build: ./node/
+    command: npm run all-dev
+    volumes:
+      - ./node/:/usr/app/
+      - /usr/app/node_modules
+    ports:
+      - "8080:8080"
