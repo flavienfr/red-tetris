@@ -1,0 +1,30 @@
+{
+  "name": "tetris_backend",
+  "version": "1.0.0",
+  "description": "A tetris api",
+  "main": "index.js",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/flavienfr/red-tetris.git"
+  },
+  "keywords": [
+    "tetris"
+  ],
+  "author": "froussel",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/flavienfr/red-tetris/issues"
+  },
+  "homepage": "https://github.com/flavienfr/red-tetris#readme",
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  }
+}
