@@ -1,14 +1,17 @@
 version: "3.3"
 services:
-#  frontend:
-#    stdin_open: true
-#    build:
-#      context: ./frontend
-#    ports:
-#      - "3000:3000"
-#    volumes:
-#      - "./app/node_modules"
-#      - "./frontend/:/app"
+  frontend:
+    stdin_open: true
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile #PROD Dockerfile.prod
+    ports:
+      - "3000:3000" #PROD 80
+    volumes: #PROD without ?
+      - "./app/node_modules"
+      - "./frontend/:/app"
+    depends_on:
+      - backend
 
   backend:
     build:
