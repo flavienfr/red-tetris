@@ -1,0 +1,22 @@
+version: "3.3"
+services:
+  frontend:
+    container_name: frontend_dev
+    image: frontend_dev
+    build:
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - "./app/node_modules"
+      - "./frontend/:/app"
+
+  backend:
+    container_name: backend_dev
+    image: backend_dev
+    ports:
+      - "8080:8080"
+    volumes:
+      - "/usr/app/node_modules"
+      - "./backend/:/usr/app/"
+    command: npm run dev

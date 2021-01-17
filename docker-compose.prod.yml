@@ -1,0 +1,16 @@
+version: "3.3"
+services:
+  frontend:
+    container_name: frontend_prod
+    image: frontend_prod
+    build:
+      dockerfile: Dockerfile.prod
+    ports:
+      - "80:80"
+
+  backend:
+    container_name: backend_prod
+    image: backend_prod
+    ports:
+      - "8080:8080"
+    command: npm run start

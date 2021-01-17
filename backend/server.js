@@ -5,13 +5,12 @@ const cors = require('cors');
 
 const PORT = 8080;
 const HOST = '0.0.0.0';
-const app = express();
 
-// Cors for frontend ip != backend ip
-app.use(cors())
+const app = express();
+app.use(cors()) //TUTO: Cors for frontend ip != backend ip
 
 app.get('/', (req, res) => {
-  res.send('Hello World 2');
+  res.send('Hello World');
 });
 
 

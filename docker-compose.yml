@@ -4,20 +4,9 @@ services:
     stdin_open: true
     build:
       context: ./frontend
-      dockerfile: Dockerfile #PROD Dockerfile.prod
-    ports:
-      - "3000:3000" #PROD 80
-    volumes: #PROD without ?
-      - "./app/node_modules"
-      - "./frontend/:/app"
     depends_on:
       - backend
 
   backend:
     build:
       context: ./backend
-    ports:
-      - "8080:8080"
-    volumes:
-      - "/usr/app/node_modules"
-      - "./backend/:/usr/app/"
