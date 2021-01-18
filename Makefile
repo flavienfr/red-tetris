@@ -18,6 +18,12 @@ test_front:
 test_coverage_front:
 	docker exec -it frontend_dev npm test -- --coverage
 
+test_back:
+	docker exec -it backend_dev npm test
+
+test_coverage_back:
+	docker exec -it backend_dev npm test -- --coverage
+
 # Sh
 front_sh:
 	docker exec -it frontend_dev sh
