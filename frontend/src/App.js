@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+/*import React, { Component } from 'react';
 import logo from './logo.svg';
 import axios from 'axios';
 import './App.css';
@@ -34,3 +34,47 @@ class App extends Component {
 }
 
 export default App;
+*/
+
+import React, { useState, useEffect } from "react"
+//import socketIOClient from "socket.io-client"
+const io = require("socket.io-client");
+const apiUrl = `http://localhost:8080`;
+
+function ClientComponent() {
+  const [response, setResponse] = useState("")
+
+  useEffect(() => {
+	//const socket = socketIOClient(apiUrl)
+	const socket = io(apiUrl, {
+	  });
+	
+    socket.on("FromAPI", data => {
+    setResponse(data)
+    })
+
+    return () => socket.disconnect()
+  }, [])
+  
+  return (
+    <p>
+    It's <time dateTime={response}>{response}</time>
+    </p>
+  )
+}
+
+function App() {
+  const [loadClient, setLoadClient] = useState(true)
+  return (
+    <>
+    {}
+    <button onClick={() => setLoadClient(prevState => !prevState)}>
+      STOP CLIENT
+    </button>
+    {}
+    {loadClient ? <ClientComponent /> : null}
+    </>
+  )
+}
+
+export default App
