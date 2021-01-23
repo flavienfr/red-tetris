@@ -1,30 +1,25 @@
-import React, { useState, useEffect } from 'react';
-import logo from './logo.svg';
-import axios from 'axios';
-import './App.css';
+import { useState, useEffect } from 'react'
+import logo from './logo.svg'
+import './App.css'
+import useFetch from './CustomHooks/useFetch'
 
-const apiUrl = `http://localhost:8080`;
+const apiUrl = `http://localhost:8080`//TODO globalvariable
+const io = require("socket.io-client")
 
-function useFetch(urlPath) {
-  const [response, setResponse] = useState(null)
-  const [loading, setLoading] = useState(false)
-  const [hasError, setHasError] = useState(false)
-
+function ClockServerComponent() {
+	const [response, setResponse] = useState("")
   useEffect(() => {
-    setLoading(true)
-    axios
-      .get(apiUrl + urlPath)
-      .then((res) => {
-        setResponse(res.data)
-        setLoading(false)
-      })
-      .catch(() => {
-          setHasError(true)
-          setLoading(false)
-      })
-  }, [urlPath])
+    const socket = io(apiUrl)
 
-  return [response, loading, hasError]
+	  socket.on("FromAPI", data => {
+	  	setResponse(data)
+	  })
+    return () => socket.disconnect()
+	}, [])
+	
+	return(
+	  <p>It's <time dateTime={response}>{response}</time></p>
+	)
 }
 
 function App(){
@@ -39,9 +34,10 @@ function App(){
           (hasError ? <p>Error occured.</p> : 
             <p>Api data from root request: {data}</p>)
         }
+		<ClockServerComponent/>
       </header>
     </div>
   )
 }
 
-export default App;
+export default App
