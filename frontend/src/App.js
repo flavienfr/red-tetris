@@ -1,36 +1,47 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import logo from './logo.svg';
 import axios from 'axios';
 import './App.css';
 
 const apiUrl = `http://localhost:8080`;
 
-class App extends Component {
-  state = {
-    data: "empty"
-  };
+function useFetch(urlPath) {
+  const [response, setResponse] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const [hasError, setHasError] = useState(false)
 
-  async loadData() {
-    const res = await axios.get(apiUrl + '/');
-    this.setState({
-      data: res.data
-    });
-  }
+  useEffect(() => {
+    setLoading(true)
+    axios
+      .get(apiUrl + urlPath)
+      .then((res) => {
+        setResponse(res.data)
+        setLoading(false)
+      })
+      .catch(() => {
+          setHasError(true)
+          setLoading(false)
+      })
+  }, [urlPath])
 
-  componentDidMount() {
-    this.loadData();
-  }
+  return [response, loading, hasError]
+}
 
-  render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>Api data from root request: {this.state.data}</p>
-        </header>
-      </div>
-    );
-  }
+function App(){
+  const [data, loading, hasError] = useFetch("/")
+
+  return (
+    <div className="App">
+      <header className="App-header">
+        <img src={logo} className="App-logo" alt="logo" />
+        {
+          loading ? <p>Loading...</p> :
+          (hasError ? <p>Error occured.</p> : 
+            <p>Api data from root request: {data}</p>)
+        }
+      </header>
+    </div>
+  )
 }
 
 export default App;
