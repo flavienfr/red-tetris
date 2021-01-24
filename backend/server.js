@@ -1,5 +1,9 @@
 'use strict'
 
+/*
+ to implement: Player, Piece and Game classes
+*/
+
 const express = require('express')
 const cors = require('cors')
 
@@ -13,21 +17,28 @@ const server = require('http').Server(app)
 const io = require("socket.io")(server, {
   cors: {
     origin: "http://localhost:3000", //TODO replace by * ?
-    methods: ["GET", "POST"]
+    methods: ["GET", "POST", "PUT"]
   }
-})
-
-//route 
-app.get('/', (req, res) => {
-  res.send('Hello World')
 })
 
 //socket
 io.on('connection', (socket) =>{
-  console.log(`Connecté au client ${socket.id}`)
+  console.log(`Client connected [${socket.id}]`)
 })
 
+
+/* main */
+
+io.on('join_create_room', (socket) =>{
+  console.log(`Client join or create room [${socket.id}]`)
+  //check if room existe or create it
+})
+
+
+/******/
+
 /* ************* */
+
 let interval;
 
 io.on("connection", (socket) => {
