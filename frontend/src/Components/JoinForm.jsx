@@ -1,24 +1,34 @@
 import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
-import { useState } from 'react'
+import { useState, useContext } from 'react'
 
-function JoinForm({ socket }){
+
+import { useHistory } from 'react-router-dom'
+import { GlobalContext } from '../App'
+
+function JoinForm(){
   const [pseudo, setPseudo] = useState("")
   const [room, setRoom] = useState("")
+  const { test } = useContext(GlobalContext)
+  let history = useHistory()
 
   function handleSubmit(e){
     e.preventDefault();
-
-    socket.emit("join_room", { pseudo, room }, (data) => {
-      if (data.code === 0)
+    //loading
+    /*socket.emit("join_room", { pseudo, room }, (data) => {
+      if (data.code === 0){
         console.log("good: ", data.msg)
-      else
+        //history.push("/tot[fsd]")
+      }
+      else{
         console.log("bad: ", data.msg)
-    })
+      }
+    })*/
   }
 
   return(
     <Form onSubmit={handleSubmit}>
+      <p>test: { test }</p>
       <Form.Group>
         <Form.Label>Pseudo</Form.Label>
         <Form.Control 
