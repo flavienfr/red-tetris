@@ -1,24 +1,33 @@
+import Player from './Player'
+
 class Room{
 	constructor(room_name, player_name, host_socket){
-		console.log('['+ room_name +']' + ' New room created by ' + player_name + '.')
+		console.log('Room['+ room_name +']' + ' New room created by ' + player_name + '.')
 		this.room_name = room_name
-		this.host_name = player_name
-    this.host_socket = host_socket
-		this.guest_name = player_name
-    this.guest_socket = null
-    this.player_size = 1
-    //this.isRoomActive = to pop unuse room from rooms
-	}
-
-	logInfo(){
-		console.log('Room['+ this.room_name +']' + ' Host[' + this.host_name + '] Size[' + this.player_size + ']')
+	    this.host = new Player(player_name, host_socket)
+	    this.guest = null
+	    this.player_size = 1
+	    //this.isRoomActive = to pop unuse room from rooms
+      //this.initPlayerSocket()
   }
+
+  logInfo(){
+    console.log('Room['+ this.room_name +']' + ' Host[' + this.host.name + '] Size[' + this.player_size + ']')
+  }
+
+  /*initPlayer(player_name){
+    this.host.socket.on("disconnect", () => {
+      console.log('Room['+ this.room_name +'] ' + player.name + ' disconnected')
+      //player = null //delete 
+      this.player_size -= 1
+    })
+    return (new Player(player_name, socket))
+  }*/
   
   joinRoom(player_name, guest_socket){
-    console.log('['+ this.room_name +']' + player_name + ' join the room.')
+    console.log('Room['+ this.room_name +']' + '['+ this.room_name +']' + player_name + ' join the room.')
+    this.guest = new Player(player_name, guest_socket)
     this.player_size += 1
-    this.guest_socket = guest_socket
-    this.guest_name = player_name
   }
 
   roomStatus(room_name, player_name){
@@ -26,7 +35,7 @@ class Room{
     if (this.room_name == room_name){
       if (this.player_size == 2)
         return 'FULL'
-      else if (this.host_name == player_name)
+      else if (this.host.name == player_name)
         return 'SAMEPSEUDO'
       else
         return 'REACHABLE'

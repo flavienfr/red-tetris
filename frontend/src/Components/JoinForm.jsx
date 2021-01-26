@@ -1,28 +1,31 @@
 import Button from 'react-bootstrap/Button'
 import Alert from 'react-bootstrap/Alert'
 import Form from 'react-bootstrap/Form'
-import { useState, useContext } from 'react'
 
+import { useState } from 'react'
 import { useHistory } from 'react-router-dom'
-import { GlobalContext } from '../App.js'
+
+import { socket } from '../App'
 
 function JoinForm(){
-  const [pseudo, setPseudo] = useState("")
+  const [player_name, setPlayer_name] = useState("")
   const [room, setRoom] = useState("")
   const [alertMsg, setAlertMsg] = useState(null)
-  const { socket } = useContext(GlobalContext)
   let history = useHistory()
 
   function handleSubmit(e){
     e.preventDefault();
     //loading
-    socket.emit("join_room", { pseudo, room }, (data) => {
+  
+    socket.emit("join_room", { player_name, room }, (data) => {
       console.log(data.msg)
       if (data.code === 0){
-        history.push('/' + room + '[' + pseudo + ']')
+       // console.log('cici', data.code, data.msg)
+        history.push('/' + room + '[' + player_name + ']')
       }
       else{
         setAlertMsg(data.msg)
+        //console.log('lyul', data.code, data.msg)
       }
     })
   }
@@ -35,16 +38,15 @@ function JoinForm(){
         </Alert>
       }
       <Form.Group>
-        <Form.Label>Pseudo</Form.Label>
+        <Form.Label>player_name</Form.Label>
         <Form.Control 
-          value={pseudo}
-          onChange={ (e) => (setPseudo(e.target.value)) }
+          value={player_name}
+          onChange={ (e) => (setPlayer_name(e.target.value)) }
           type="text"
           placeholder="Enter pseudo"
           required
         />
       </Form.Group>
-
       <Form.Group>
         <Form.Label>Room</Form.Label>
         <Form.Control
@@ -55,7 +57,6 @@ function JoinForm(){
           required
         />
       </Form.Group>
-
       <Button variant="primary" type="submit">
         Join
       </Button>

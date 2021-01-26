@@ -1,6 +1,5 @@
 'use strict'
 import Room from './Room'
-
 const express = require('express')
 const cors = require('cors')
 const HOST_PORT = 8080
@@ -15,17 +14,15 @@ const io = require("socket.io")(server, {
 
 let rooms = []
 
-//socket
 io.on('connection', (socket) => {
   console.log(`Client connected [${socket.id}]`)
 
   socket.on('join_room', (data, callback) => {
-    console.log(`join_room from [${socket.id}]`)
 
 	  rooms.forEach(room => {
       room.logInfo()
   
-      const room_status =  room.roomStatus(data.room, data.pseudo)
+      const room_status =  room.roomStatus(data.room, data.player_name)
       switch (room_status) {
         case 'FULL':
           callback({ code: 1, msg: "The room is full." })
@@ -37,23 +34,26 @@ io.on('connection', (socket) => {
           callback({ code: 1, msg: "Pseudo already taken." })
           return
         case 'REACHABLE':
-          room.joinRoom(data.pseudo, socket)
+          room.joinRoom(data.player_name, socket)
           callback({ code: 0, msg: "Succed to join room." })
           return
       }
     })
 
-	  let newRoom = new Room(data.room, data.pseudo, socket)
+	  let newRoom = new Room(data.room, data.player_name, socket)
 	  rooms.push(newRoom)//TODO not fp ?
 	  callback({ code: 0, msg: "Succed to create room." })
   })
 
 })
 
+server.listen(HOST_PORT, function () {
+	console.log(`Running on port ${HOST_PORT}`) //pk on 0.0.0.0 et localhost
+})
 
 
 /* ************* */
-
+/*
 let interval;
 
 io.on("connection", (socket) => {
@@ -71,11 +71,5 @@ io.on("connection", (socket) => {
 const getApiAndEmit = socket => {
   const response = new Date();
   socket.emit("FromAPI", response);
-};
+};*/
 /* ************* */
-
-
-
-server.listen(HOST_PORT, function () {
-	console.log(`Running on port ${HOST_PORT}`) //pk on 0.0.0.0 et localhost
-})
