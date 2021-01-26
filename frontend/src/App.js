@@ -3,28 +3,25 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import './App.css'
 import JoinForm from './Components/JoinForm.jsx'
 import Room from './Components/Room.jsx'
-import { Switch, Route, Link } from 'react-router-dom'
+import { Switch, Route } from 'react-router-dom'
 
 const io = require("socket.io-client")
 
 const apiUrl = `http://localhost:8080`//TODO globalvariable
 const socket = io(apiUrl)
 
-let test = 'ca marche'
-export const GlobalContext = createContext(test)
+export const GlobalContext = createContext()
 
 function App(){
   return (
     <div className="App">
 
-      <GlobalContext.Provider value={test}>
+      <GlobalContext.Provider value={{socket}}>
         <Switch>
           <Route exact path='/' component={JoinForm}/>
           <Route exact path='/:room[:player_name]' component={Room}/>
         </Switch>
       </GlobalContext.Provider>
-
-      <Link to='/the_room[The_player_name]'>Back</Link>
     </div>
   )
 }

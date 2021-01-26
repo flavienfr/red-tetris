@@ -1,34 +1,39 @@
 import Button from 'react-bootstrap/Button'
+import Alert from 'react-bootstrap/Alert'
 import Form from 'react-bootstrap/Form'
 import { useState, useContext } from 'react'
 
-
 import { useHistory } from 'react-router-dom'
-import { GlobalContext } from '../App'
+import { GlobalContext } from '../App.js'
 
 function JoinForm(){
   const [pseudo, setPseudo] = useState("")
   const [room, setRoom] = useState("")
-  const { test } = useContext(GlobalContext)
+  const [alertMsg, setAlertMsg] = useState(null)
+  const { socket } = useContext(GlobalContext)
   let history = useHistory()
 
   function handleSubmit(e){
     e.preventDefault();
     //loading
-    /*socket.emit("join_room", { pseudo, room }, (data) => {
+    socket.emit("join_room", { pseudo, room }, (data) => {
+      console.log(data.msg)
       if (data.code === 0){
-        console.log("good: ", data.msg)
-        //history.push("/tot[fsd]")
+        history.push('/' + room + '[' + pseudo + ']')
       }
       else{
-        console.log("bad: ", data.msg)
+        setAlertMsg(data.msg)
       }
-    })*/
+    })
   }
-
+  
   return(
     <Form onSubmit={handleSubmit}>
-      <p>test: { test }</p>
+      { alertMsg && 
+        <Alert  variant='danger'>
+          {alertMsg}
+        </Alert>
+      }
       <Form.Group>
         <Form.Label>Pseudo</Form.Label>
         <Form.Control 
