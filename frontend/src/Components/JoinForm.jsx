@@ -2,32 +2,28 @@ import Button from 'react-bootstrap/Button'
 import Alert from 'react-bootstrap/Alert'
 import Form from 'react-bootstrap/Form'
 
-import { useState } from 'react'
-import { useHistory } from 'react-router-dom'
-
-import { socket } from '../App'
+import { useState, useEffect } from 'react'
+import { useHistory, useLocation } from 'react-router-dom'
 
 function JoinForm(){
   const [player_name, setPlayer_name] = useState("")
   const [room, setRoom] = useState("")
   const [alertMsg, setAlertMsg] = useState(null)
-  let history = useHistory()
+  const history = useHistory()
+  const location = useLocation()
+  
+  useEffect( () => {
+    if (location.state !== undefined){
+      setPlayer_name(location.state.player_name)
+      setRoom(location.state.room)
+      if (location.state.code !== 0)
+        setAlertMsg(location.state.msg)
+    }
+  }, [location.state])
 
   function handleSubmit(e){
     e.preventDefault();
-    //loading
-  
-    socket.emit("join_room", { player_name, room }, (data) => {
-      console.log(data.msg)
-      if (data.code === 0){
-       // console.log('cici', data.code, data.msg)
-        history.push('/' + room + '[' + player_name + ']')
-      }
-      else{
-        setAlertMsg(data.msg)
-        //console.log('lyul', data.code, data.msg)
-      }
-    })
+    history.push('/' + room + '[' + player_name + ']')
   }
   
   return(
@@ -38,7 +34,7 @@ function JoinForm(){
         </Alert>
       }
       <Form.Group>
-        <Form.Label>player_name</Form.Label>
+        <Form.Label>Pseudo</Form.Label>
         <Form.Control 
           value={player_name}
           onChange={ (e) => (setPlayer_name(e.target.value)) }

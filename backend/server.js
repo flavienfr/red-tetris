@@ -19,27 +19,30 @@ io.on('connection', (socket) => {
 
   socket.on('join_room', (data, callback) => {
 
-	  rooms.forEach(room => {
-      room.logInfo()
-  
-      const room_status =  room.roomStatus(data.room, data.player_name)
-      switch (room_status) {
-        case 'FULL':
-          callback({ code: 1, msg: "The room is full." })
-          return
-        case 'INGAME':
-          callback({ code: 1, msg: "You can't join a room in game." })
-          return
-        case 'SAMEPSEUDO':
-          callback({ code: 1, msg: "Pseudo already taken." })
-          return
-        case 'REACHABLE':
-          room.joinRoom(data.player_name, socket)
-          callback({ code: 0, msg: "Succed to join room." })
-          return
+	  rooms.forEach(function(room, index, array){
+      console.log('Room['+ room.room_name +']' + ' Host[' + room.host.name + '] Size[' + room.player_size + ']')
+
+      if (room.status == 'off')
+        array.splice(index, 1)
+      else {//icccccccicicicicicicicic
+        const room_status =  room.roomStatus(data.room, data.player_name)
+        switch (room_status) {
+          case 'FULL':
+            callback({ code: 1, msg: "The room is full." })
+            return
+          case 'INGAME':
+            callback({ code: 1, msg: "You can't join a room in game." })
+            return
+          case 'SAMEPSEUDO':
+            callback({ code: 1, msg: "Pseudo already taken." })
+            return
+          case 'REACHABLE':
+            room.joinRoom(data.player_name, socket)
+            callback({ code: 0, msg: "Succed to join room." })
+            return
+        }
       }
     })
-
 	  let newRoom = new Room(data.room, data.player_name, socket)
 	  rooms.push(newRoom)//TODO not fp ?
 	  callback({ code: 0, msg: "Succed to create room." })

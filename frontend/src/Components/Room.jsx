@@ -1,26 +1,43 @@
-import { useParams } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { useParams, useHistory } from 'react-router-dom'
 import { socket } from '../App'
 
 function Room() {
-  let { room, player_name} = useParams()
+  const [loading, setLoading] = useState(true)
+  const { room, player_name} = useParams()
+  const history = useHistory()
 
-  socket.emit("join_room", { player_name, room }, (data) => {
-    console.log(data.msg)
-    if (data.code === 0){
-      console.log('icici', data.code, data.msg)
+  useEffect(() => {
+    socket.emit("join_room", { player_name, room }, (data) => {
+      console.log(data)
+      if (data.code === 0)
+        setLoading(false)
+      else{
+        const location = {
+          pathname: '/',
+          state: { code: data.code, msg: data.msg, player_name, room }
+        }
+        history.replace(location)
+      }
+    })
+
+    return () =>{
+      console.log("leave_room")
+      socket.emit("leave_room")
     }
-    else{
-      console.log('lalala', data.code, data.msg)
-    }
-  })
-  console.log('je suis ici')
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
 	return(
-	  <>
-		<p>Room: {room}</p>
-		<p>Player: {player_name}</p>
-	  </>
+	  <>{
+      loading ? <p>loading component</p> : 
+      <div>
+        <p>Game component</p>
+        <p>Room: {room}</p>
+        <p>Player: {player_name}</p>
+      </div> 
+	  }</>
 	)
-  }
+}
 
 export default Room
