@@ -14,9 +14,9 @@ class Room{
   }
 
   listenLeaveRoom(player){
-    player.socket.once("leave_room", () => {
+    player.socket.once("leave_room", () => {///iciciicci
       console.log('Room['+ this.name +'] ' + player.name + ' leave room.')
-      if (this.player_size == 2){
+      if (this.player_size == 2 && this.guest.socket.id === player.socket.id){
         console.log("changment d'host")
         this.host = this.guest
         this.guest = null
@@ -31,6 +31,7 @@ class Room{
     console.log('Room['+ this.name +']' + ' Host' + '['+ this.name +'] ' + player_name + ' join the room.')
     this.guest = new Player(player_name, guest_socket)
     this.player_size += 1
+    this.listenLeaveRoom(this.guest)
   }
 
   roomStatus(room_name, player_name){

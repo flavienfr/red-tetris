@@ -49,7 +49,6 @@ io.on('connection', (socket) => {
     })
 
     if (isRoomExist === false){
-      console.log("CREATE ROOM: ", isRoomExist)
 	    let newRoom = new Room(data.room, data.player_name, socket)
 	    rooms.push(newRoom)
       callback({ code: 0, msg: "Succed to create room." })
