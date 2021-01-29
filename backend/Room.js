@@ -13,44 +13,53 @@ class Room{
   }
 
   quitRoomEnvent(player){
-    if (this.player_size == 2 && this.host.socket.id === player.socket.id){
-      console.log("Change of host")
-      this.host = this.guest
-      this.guest = null
+    if (this.player_size == 2){
+      if(this.host.socket.id === player.socket.id){
+        this.host = this.guest
+        this.guest = null
+        console.log('Room['+ this.name +'] ' + this.host.name + ' is the new host')
+      }
+      else{
+        this.guest = null
+        console.log('Room['+ this.name +'] player left the room.')
+      }
     }
-    else
+    else{
+      console.log('Room['+ this.name +'] room close.')
       this.status = 'off'
+    }
     this.player_size -= 1
   }
 
   listenLeaveRoom(player){
     player.socket.once("disconnect", () => {
-      console.log('Room['+ this.name +'] ' + player.name + ' disconnect room.')
+      console.log('Room['+ this.name +'] ' + player.name + ' disconnect from the room.')
       player.socket.removeAllListeners("leave_room")//TODO ? pour garbage collector ?
       this.quitRoomEnvent(player)
     })
 
     player.socket.once("leave_room", () => {
-      console.log('Room['+ this.name +'] ' + player.name + ' leave room.')
+      console.log('Room['+ this.name +'] ' + player.name + ' leave the room.')
       player.socket.removeAllListeners("disconnect")
       this.quitRoomEnvent(player)
     })
   }
 
   joinRoom(player_name, guest_socket){
-    console.log('Room['+ this.name +']' + ' Host' + '['+ this.name +'] ' + player_name + ' join the room.')
+    console.log('Room['+ this.name +'] ' + player_name + ' join the room.')
     this.guest = new Player(player_name, guest_socket)
     this.player_size += 1
     this.listenLeaveRoom(this.guest)
   }
 
   roomStatus(room_name, player_name){
-    //TODO add is in game INGAME
     if (this.name == room_name){
       if (this.player_size == 2)
         return 'FULL'
       else if (this.host.name == player_name)
         return 'SAMEPSEUDO'
+      else if (this.game && this.game.status === 'on')
+        return 'INGAME'
       else
         return 'REACHABLE'
     }
