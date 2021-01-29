@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams, useHistory } from 'react-router-dom'
 import { socket } from '../App'
+import Game from './Game.jsx'
 
 function Room() {
   const [loading, setLoading] = useState(true)
@@ -19,8 +20,7 @@ function Room() {
         }
         history.replace(location)
       }
-    })
-
+	})
     return () =>{
       console.log("leave_room")
       socket.emit("leave_room")
@@ -35,6 +35,7 @@ function Room() {
         <p>Game component</p>
         <p>Room: {room}</p>
         <p>Player: {player_name}</p>
+		<Game/>
       </div> 
 	  }</>
 	)

@@ -21,7 +21,7 @@ io.on('connection', (socket) => {
     let isRoomExist = false
 
 	  rooms.forEach(function(room, index, array){
-      console.log('Room['+ room.name +']' + ' Host[' + room.host.name + '] Size[' + room.player_size + ']')
+      //console.log('Room['+ room.name +']' + ' Host[' + room.host.name + '] Size[' + room.player_size + ']')
       if (room.status == 'off')
         array.splice(index, 1)
       else {
