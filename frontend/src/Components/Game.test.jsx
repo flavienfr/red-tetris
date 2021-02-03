@@ -1,1 +1,5 @@
-import Game from './Game';
+import Game from './Game'
+
+it('two plus two is four', () => {
+	expect(2 + 2).toBe(4);
+  })

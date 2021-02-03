@@ -28,16 +28,16 @@ function Room() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  if (loading)
+    return <p>loading...</p>
+
 	return(
-	  <>{
-      loading ? <p>loading component</p> : 
       <div>
         <p>Game component</p>
         <p>Room: {room}</p>
         <p>Player: {player_name}</p>
-		<Game/>
+        <Game/>
       </div> 
-	  }</>
 	)
 }
 
