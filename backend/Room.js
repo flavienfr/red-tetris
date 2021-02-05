@@ -53,6 +53,7 @@ class Room{
   }
 
   roomStatus(room_name, player_name){
+    console.log("room_name", room_name, "this.name", this.name)
     if (this.name == room_name){
       if (this.player_size == 2)
         return 'FULL'

@@ -3,6 +3,14 @@ import { useParams, useHistory } from 'react-router-dom'
 import { socket } from '../App'
 import Game from './Game.jsx'
 
+function BackToJoinForm(code, msg, player_name, room, history){
+	const location = {
+		pathname: '/',
+		state: { code, msg, player_name, room }
+	}
+	history.replace(location)	
+}
+
 function Room() {
   const [loading, setLoading] = useState(true)
   const { room, player_name} = useParams()
@@ -13,16 +21,10 @@ function Room() {
       console.log(data)
       if (data.code === 0)
         setLoading(false)
-      else{
-        const location = {
-          pathname: '/',
-          state: { code: data.code, msg: data.msg, player_name, room }
-        }
-        history.replace(location)
-      }
-	})
+      else
+        BackToJoinForm(data.code, data.msg, player_name, room, history)
+  	})
     return () =>{
-      console.log("leave_room")
       socket.emit("leave_room")
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

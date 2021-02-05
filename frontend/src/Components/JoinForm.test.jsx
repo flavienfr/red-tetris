@@ -1,13 +1,12 @@
 import JoinForm from './JoinForm'
-import { render } from '@testing-library/react'
-
-//import { createMemoryHistory } from 'history'
+import { render, screen } from '@testing-library/react'
+import { MemoryRouter } from 'react-router-dom'
+import App from '../App'
 
 it('set pseudo and room im form.', function() {
-	//const history = createMemoryHistory()
-	//render(<JoinForm/>)
+  render(<App />, { wrapper: MemoryRouter })
+  expect(screen.getByText("RED TETRIS")).toBeInTheDocument()
 })
 
-it('two plus two is four', () => {
-	expect(2 + 2).toBe(4);
-  })
+
+//TODO fake join room data response

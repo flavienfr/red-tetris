@@ -22,25 +22,5 @@ function App(){
 
 export default App
 
-/*
-import logo from './logo.svg'
-
-<header className="App-header">
-<img src={logo} className="App-logo" alt="logo" />
-*/
-
-/*
-function ClockServerComponent() {
-  const [response, setResponse] = useState("")
-  useEffect(() => {
-    socket.on("FromAPI", data => {
-      setResponse(data)
-    })
-    return () => socket.disconnect()
-  }, [])
-
-  return(
-    <p>It's <time dateTime={response}>{response}</time></p>
-  )
-}
-*/
+//TODO: path url /#d/ffsd;l;'l'l;[fdgfdgfd] and
+// form weir caractere
