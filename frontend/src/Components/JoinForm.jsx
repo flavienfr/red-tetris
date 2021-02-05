@@ -11,7 +11,7 @@ function JoinForm(){
   const [alertMsg, setAlertMsg] = useState(null)
   const history = useHistory()
   const location = useLocation()
-  
+
   useEffect( () => {
     if (location.state !== undefined){
       setPlayer_name(location.state.player_name)
@@ -27,6 +27,8 @@ function JoinForm(){
   }
   
   return(
+    <>
+    <h1>RED TETRIS</h1>
     <Form onSubmit={handleSubmit}>
       { alertMsg && 
         <Alert  variant='danger'>
@@ -57,6 +59,7 @@ function JoinForm(){
         Join
       </Button>
     </Form>
+    </>
   )
 }
 
