@@ -9,10 +9,11 @@ function Game(){
     console.log('handleStartGame')
 
     socket.emit('launch_game', {}, (data) => {
-      console.log(data)
+      if (data.code === 0)
+        setBtnStart(false)
+      else
+        console.log(data)
 	  })
-    
-    setBtnStart(false)
   }
 
 	return (

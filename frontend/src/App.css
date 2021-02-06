@@ -11,10 +11,41 @@
   display: grid;
   grid-template-columns: repeat(10, 1fr);
   grid-template-rows: repeat(20, 1fr);
-  gap: 3px 3px;
+
+  background-color: rgba(1,1,1,255);
+  border: 1.8mm ridge rgb(67, 62, 69);
 }
 
+.board .empty {
+  border: 1.8mm ridge rgb(67, 62, 69);
+}
 
+.board .orange {
+  background-color: rgba(254,104,4);
+  border: 2mm ridge rgba(206, 95, 21, 0.6);
+}
+
+.board .blue {
+  background-color: rgba(0,86,253);
+  border: 2mm ridge rgba(23, 71, 165, 0.6);
+}
+
+.board .green {
+  background-color: rgba(2,255,0);
+  border: 2mm ridge rgba(28, 187, 28, 0.6);
+}
+.board .pink {
+  background-color: rgba(255,3,252);
+  border: 2mm ridge rgba(177, 32, 175, 0.6);
+}
+.board .cyan {
+  background-color: rgba(0,242,252);
+  border: 2mm ridge rgba(38, 173, 177, 0.6);
+}
+
+.board .spectre {
+  opacity: 0.6;
+}
 
 /***********/
 
