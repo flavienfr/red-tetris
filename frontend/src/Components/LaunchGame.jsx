@@ -17,12 +17,13 @@ function Game(){
   }
 
 	return (
-		<div className='GameArea'>
-      {btnStart ? 
-        <Button variant="success" type="button" onClick={handleStartGame}>START</Button>:
-        <Button variant="success" type="button" disabled>START</Button>
+		<div>
+      {
+        btnStart ? 
+          <Button variant="success" type="button" onClick={handleStartGame}>START</Button>
+        :
+          <Button variant="success" type="button" disabled>START</Button>
       }
-      
 		</div>
 	)
 }
