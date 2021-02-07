@@ -15,9 +15,25 @@ class Room{
     this.listenLaunchGame(this.host)
   }
 
+  emitResetBoard(){
+    const game = this.host.game_host
+    //if (game && game.status)
+  }
+
   quitRoomEnvent(player){
     if (this.player_size == 2){
       if(this.host.socket.id === player.socket.id){
+        /**** */
+        this.host.socket.removeAllListeners('launch_game')
+        if (this.game_host){
+          this.game_host.exit()
+          this.game_host = null
+        }
+        if (this.game_guest){
+          this.game_guest.exit()
+          this.game_guest = null
+        }
+        /**** */
         this.host = this.guest
         this.guest = null
         this.listenLaunchGame(this.host)
@@ -26,15 +42,26 @@ class Room{
       }
       else{
         //emitPlayerReSize + game status (you win + reset)
+        /**** */
+        if (this.game_host){
+          this.game_host.exit()
+          this.game_host = null
+        }
+        if (this.game_guest){
+          this.game_guest.exit()
+          this.game_guest = null
+        }
+        /**** */
         this.guest = null
         console.log('Room['+ this.name +'] player left the room.')
       }
     }
     else{
       console.log('Room['+ this.name +'] room close.')
-     
+      this.status = 'off'
+
       //Mettre partout list of all event except join_room, et disconect
-      player.socket.removeAllListeners('launch_game')
+      this.host.socket.removeAllListeners('launch_game')
       if (this.game_host){
         this.game_host.exit()
         this.game_host = null
@@ -44,8 +71,6 @@ class Room{
         this.game_guest = null
       }
       //**************************** */
-
-      this.status = 'off'
     }
     this.player_size -= 1
   }

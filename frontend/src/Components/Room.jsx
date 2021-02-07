@@ -61,6 +61,12 @@ function Room() {
   }, [])
 
   const [ playerSize, setPlayerSize ] = useState(2)
+  const [ isHost, setisHoste ] = useState(1)
+  useEffect(()=>{
+    //playerSize
+    //Winner
+    //reset
+  }, [])
   //use state sur nb player
 
   //début(reception des names)/fin de la partie 
@@ -71,7 +77,7 @@ function Room() {
 	return(
       <div className='room'>
         <h1>{room}</h1>
-        { playerSize === 1 ? <LaunchGame/>: null }
+        { isHost ? <LaunchGame/>: null }
         <Board status='mainBoard' board={mainBoard} />
         { playerSize === 2 ?
             <Board status='secondBoard' board={secondBoard} /> : null
