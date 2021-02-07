@@ -19,6 +19,10 @@
 .board .empty {
   border: 1.8mm ridge rgb(67, 62, 69);
 }
+/*
+ https://www.cnews.fr/vie-numerique/2019-06-17/pour-le-createur-de-tetris-le-carre-est-la-pire-piece-du-jeu-851438
+ red yhello
+*/
 
 .board .orange {
   background-color: rgba(254,104,4);
@@ -44,7 +48,8 @@
 }
 
 .board .spectre {
-  opacity: 0.6;
+  background-color: transparent;
+  /*opacity: 0.6;*/
 }
 
 /***********/

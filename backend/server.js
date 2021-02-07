@@ -41,7 +41,12 @@ io.on('connection', (socket) => {
             return
           case 'REACHABLE':
             room.joinRoom(data.player_name, socket)
-            callback({ code: 0, msg: "Succed to join room." })
+            callback({
+              code: 0, msg: "Succed to join room.",
+              playerSize: room.player_size,
+              isHost: false,
+              reset: null
+            })
             isRoomExist = true
             return
         }
@@ -51,7 +56,11 @@ io.on('connection', (socket) => {
     if (isRoomExist === false){
 	    let newRoom = new Room(data.room, data.player_name, socket)
 	    rooms.push(newRoom)
-      callback({ code: 0, msg: "Succed to create room." })
+      callback({ code: 0, msg: "Succed to create room.",
+        playerSize: newRoom.player_size,
+        isHost: true,
+        reset: null
+      })
     }
   })
 

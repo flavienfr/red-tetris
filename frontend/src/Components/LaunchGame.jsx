@@ -1,10 +1,7 @@
 import Button from 'react-bootstrap/Button'
-import { useState } from 'react'
 import { socket } from '../App'
 
-function Game(){
-  const [btnStart, setBtnStart] = useState(true)
-
+function Game({btnStart, setBtnStart}){
   function handleStartGame(){
     console.log('handleStartGame')
 

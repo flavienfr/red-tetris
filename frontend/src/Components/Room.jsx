@@ -24,12 +24,16 @@ function Room() {
   const { room, player_name} = useParams()
   const history = useHistory()
 
+  const [btnStart, setBtnStart] = useState(true)
   const [loading, setLoading] = useState(true)
   useEffect(() => {
     socket.emit("join_room", { player_name, room }, (data) => {
-      console.log(data)
-      if (data.code === 0)
+      console.log("join_room", data)
+      if (data.code === 0){
+        setPlayerSize(data.playerSize)
+        setIsHoste(data.isHost)
         setLoading(false)
+      }
       else
         BackToJoinForm(data.code, data.msg, player_name, room, history)
   	})
@@ -44,32 +48,33 @@ function Room() {
   useEffect(() => {
     socket.on('board', (data) => {
       console.log('Board recv: ', data)
-
       let recvBoard = Array.from(data.board, (color, id) => (
         <div key={id} className={color}></div>
       ))
-
       if (data.socketId === socket.id)
         setMainBoard(recvBoard)
       else
         setSecondBoard(recvBoard)
-
     })
     return() =>{
       socket.off('board')
     }
   }, [])
 
-  const [ playerSize, setPlayerSize ] = useState(2)
-  const [ isHost, setisHoste ] = useState(1)
+  const [ playerSize, setPlayerSize ] = useState(1)
+  const [ isHost, setIsHoste ] = useState(true)
   useEffect(()=>{
-    //playerSize
-    //Winner
-    //reset
+    socket.on('roomInfo', (data) => {
+      console.log('roomINfo:', data)
+      setPlayerSize(data.playerSize)
+      setIsHoste(data.isHost)
+      if (data.reset)
+        setBtnStart(data.reset)
+    })
+    return() =>{
+      socket.off('roomInfo')
+    }
   }, [])
-  //use state sur nb player
-
-  //début(reception des names)/fin de la partie 
 
   if (loading)
     return <p>loading...</p>
@@ -77,7 +82,11 @@ function Room() {
 	return(
       <div className='room'>
         <h1>{room}</h1>
-        { isHost ? <LaunchGame/>: null }
+        { isHost ? <LaunchGame 
+              btnStart={btnStart} 
+              setBtnStart={setBtnStart}
+            /> : null 
+        }
         <Board status='mainBoard' board={mainBoard} />
         { playerSize === 2 ?
             <Board status='secondBoard' board={secondBoard} /> : null

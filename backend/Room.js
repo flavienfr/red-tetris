@@ -15,64 +15,52 @@ class Room{
     this.listenLaunchGame(this.host)
   }
 
-  emitResetBoard(){
-    const game = this.host.game_host
-    //if (game && game.status)
+  emitRoomInfo(){
+    this.host.socket.emit('roomInfo', {
+      playerSize: this.player_size,
+      isHost: true,
+      reset: true
+    })
+  }
+
+  removeGame(removeLaunchGame){
+    if (removeLaunchGame)
+      this.host.socket.removeAllListeners('launch_game')
+    if (this.host_game){
+      this.host_game.exit()//send reset board (+winner on board (: )
+      this.host_game = null
+    }
+    if (this.guest_game){
+      this.guest_game.exit()//send reset board (+winner on board (: )
+      this.guest_game = null
+    }
   }
 
   quitRoomEnvent(player){
-    if (this.player_size == 2){
+    const player_size_save = this.player_size
+    this.player_size -= 1
+  
+    if (player_size_save == 2){
       if(this.host.socket.id === player.socket.id){
-        /**** */
-        this.host.socket.removeAllListeners('launch_game')
-        if (this.game_host){
-          this.game_host.exit()
-          this.game_host = null
-        }
-        if (this.game_guest){
-          this.game_guest.exit()
-          this.game_guest = null
-        }
-        /**** */
+        this.removeGame(true)
         this.host = this.guest
         this.guest = null
         this.listenLaunchGame(this.host)
-        //emitPlayerReSize + game status (you win + reset)
+        this.emitRoomInfo()
         console.log('Room['+ this.name +'] ' + this.host.name + ' is the new host')
       }
       else{
-        //emitPlayerReSize + game status (you win + reset)
-        /**** */
-        if (this.game_host){
-          this.game_host.exit()
-          this.game_host = null
-        }
-        if (this.game_guest){
-          this.game_guest.exit()
-          this.game_guest = null
-        }
-        /**** */
+        this.removeGame(false)
+        this.emitRoomInfo()
         this.guest = null
         console.log('Room['+ this.name +'] player left the room.')
       }
     }
     else{
       console.log('Room['+ this.name +'] room close.')
+      this.removeGame(true)
       this.status = 'off'
-
-      //Mettre partout list of all event except join_room, et disconect
-      this.host.socket.removeAllListeners('launch_game')
-      if (this.game_host){
-        this.game_host.exit()
-        this.game_host = null
-      }
-      if (this.game_guest){
-        this.game_guest.exit()
-        this.game_guest = null
-      }
-      //**************************** */
     }
-    this.player_size -= 1
   }
 
   listenLeaveRoom(player){
@@ -93,17 +81,17 @@ class Room{
     console.log('Room['+ this.name +'] ' + player_name + ' join the room.')
     this.guest = new Player(player_name, guest_socket)
     this.player_size += 1
+    this.emitRoomInfo()
     this.listenLeaveRoom(this.guest)
   }
 
   roomStatus(room_name, player_name){
-    console.log("   (tmp log) => room_name", room_name, "this.name", this.name)
     if (this.name == room_name){
       if (this.player_size == 2)
         return 'FULL'
       else if (this.host.name == player_name)
         return 'SAMEPSEUDO'
-      else if (this.game_host && this.game_host.status === 'on')
+      else if (this.host_game && this.host_game.status === 'on')
         return 'INGAME'
       else
         return 'REACHABLE'
@@ -116,15 +104,18 @@ class Room{
       console.log('Room['+ this.name +'] ' + this.player_size + ' player(s) game launch')
       
       //TODO some check before
-      if (this.game_host && this.game_host.status == 'on')
+      if (this.host_game && this.host_game.status == 'on')
         return (callback({ code: 1, msg: "The room is in game." }))
 
       callback({ code: 0, msg: "Succed to create room." })
-      this.host_game = new Game(this.host, this.guest)
+
+      //generator de piece
+    
+      this.host_game = new Game(this.host, this.guest, this.name)//+piece generator 
       this.host_game.launch()
   
       //if (this.guest){
-      //  this.guest_game = new Game(this.guest, this.host)
+      //  this.guest_game = new Game(this.guest, this.host, this.name)
       //  this.guest_game.launch()
       //}
   

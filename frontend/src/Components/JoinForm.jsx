@@ -6,12 +6,12 @@ import { useState, useEffect } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 
 function JoinForm(){
-  const [player_name, setPlayer_name] = useState("")
-  const [room, setRoom] = useState("")
-  const [alertMsg, setAlertMsg] = useState(null)
   const history = useHistory()
   const location = useLocation()
 
+  const [player_name, setPlayer_name] = useState("")
+  const [room, setRoom] = useState("")
+  const [alertMsg, setAlertMsg] = useState(null)
   useEffect( () => {
     if (location.state !== undefined){
       setPlayer_name(location.state.player_name)
