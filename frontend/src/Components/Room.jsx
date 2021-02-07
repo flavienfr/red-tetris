@@ -15,7 +15,7 @@ function BackToJoinForm(code, msg, player_name, room, history){
 function EmptyBoard(){
   return (
     Array.from({length: 200}, (_, id) => (
-      <div key={id} className='empty'></div>
+      <div key={id} id={ '_' + id } className='empty'></div>
     ))
   )
 }
@@ -41,7 +41,7 @@ function Room() {
       socket.emit("leave_room")
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [room, player_name])//TODO redo the bug at the end 
 
   const [mainBoard, setMainBoard] = useState(EmptyBoard())
   const [secondBoard, setSecondBoard] = useState(EmptyBoard())
@@ -49,7 +49,7 @@ function Room() {
     socket.on('board', (data) => {
       console.log('Board recv: ', data)
       let recvBoard = Array.from(data.board, (color, id) => (
-        <div key={id} className={color}></div>
+        <div key={id} id={ '_' + id } className={color}></div>
       ))
       if (data.socketId === socket.id)
         setMainBoard(recvBoard)

@@ -12,21 +12,45 @@
   grid-template-columns: repeat(10, 1fr);
   grid-template-rows: repeat(20, 1fr);
 
-  background-color: rgba(1,1,1,255);
-  border: 1.8mm ridge rgb(67, 62, 69);
+  border: 1.8mm outset rgb(91, 81, 95);
+  border-radius: 0.9em;
+
+  background-color: rgb(0, 0, 0);
+  box-shadow: 0.5em 0.5em 1em rgb(0, 0, 0);
+  /*box-shadow: 0 0 10px 5px blue;*/
+}
+
+.board #_0{
+  border-top-left-radius: 0.4em;
+}
+.board #_9{
+  border-top-right-radius: 0.4em;
+}
+.board #_190{
+  border-bottom-left-radius: 0.4em;
+}
+.board #_199{
+  border-bottom-right-radius: 0.4em;
 }
 
 .board .empty {
-  border: 1.8mm ridge rgb(67, 62, 69);
+  border: 1.8mm outset rgb(91, 81, 95);
+  background-color: rgb(19, 18, 18);
 }
-/*
- https://www.cnews.fr/vie-numerique/2019-06-17/pour-le-createur-de-tetris-le-carre-est-la-pire-piece-du-jeu-851438
- red yhello
-*/
 
 .board .orange {
   background-color: rgba(254,104,4);
   border: 2mm ridge rgba(206, 95, 21, 0.6);
+}
+
+.board .red {
+  background-color: rgba(228,0,39);
+  border: 2mm ridge rgba(228,0,39, 0.6);
+}
+
+.board .red {
+  background-color: rgba(228,222,0);
+  border: 2mm ridge rgba(228,222,0,0.6);
 }
 
 .board .blue {

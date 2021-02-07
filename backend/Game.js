@@ -13,6 +13,10 @@ class Game{
     
     //init socket listen keys from the host
     this.mainBoard = Array.from({length: 200}, () => ( 'pink' ))
+
+    //this.currentPiece = {
+    //  type
+    //}
     
     //this.interv = null
   }

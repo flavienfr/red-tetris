@@ -53,7 +53,7 @@ class Room{
         this.removeGame(false)
         this.emitRoomInfo()
         this.guest = null
-        console.log('Room['+ this.name +'] player left the room.')
+        console.log('Room['+ this.name +'] the guest left the room.')
       }
     }
     else{
