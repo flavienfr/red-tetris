@@ -41,7 +41,7 @@ function Room() {
       socket.emit("leave_room")
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [room, player_name])//TODO redo the bug at the end 
+  }, [room, player_name])//TODO redo the bug at the end
 
   const [mainBoard, setMainBoard] = useState(EmptyBoard())
   const [secondBoard, setSecondBoard] = useState(EmptyBoard())
