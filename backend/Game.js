@@ -1,39 +1,35 @@
 import { io } from './server'
 
 class Game{
-  constructor(host, guest, room_name){
-    this.room_name = room_name
+  constructor(host, guest, room, generator){
+    this.room= room
     this.host = host
     this.guest = guest
-    this.status = 'on'
-
-    this.host.socket.join(this.room_name)
-    if (this.guest)
-      this.guest.socket.join(this.room_name)
-    
-    //init socket listen keys from the host
     this.mainBoard = Array.from({length: 200}, () => ( 'pink' ))
+    this.generator = generator
+    this.current_piece = null
 
-    //this.currentPiece = {
-    //  type
-    //}
-    
-    //this.interv = null
+    this.host.socket.join(this.room.name)
+    if (this.guest)
+      this.guest.socket.join(this.room.name)
+    //init socket listen keys from the host
   }
 
   launch(){
-    //try to send to multi players
-    io.to(this.room_name).emit('board', {
+    io.to(this.room.name).emit('board', {
       socketId: this.host.socket.id,
       board: this.mainBoard
     })
-    //this.host.socket.emit('board', this.mainBoard)
   }
   
   exit(){
     //console.log('rooms: ', this.host.socket.rooms)
-    console.log('Room['+this.room_name+'] '+this.host.name+'\'s Game exited')
-    this.host.socket.leave(this.room_name)
+    console.log('Room['+this.room.name+'] Player['+this.host.name+'] quit')
+    this.host.socket.leave(this.room.name)
+    this.host.closeGame()
+    this.guest = null
+    this.room = null
+
     //this.status = 'off'
     //demonter room socket 
     //clearInterval(this.interv)

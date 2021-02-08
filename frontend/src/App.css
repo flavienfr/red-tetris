@@ -34,41 +34,43 @@
 }
 
 .board .empty {
-  border: 1.8mm outset rgb(91, 81, 95);
+  border: 1.8mm ridge rgb(91, 81, 95);
   background-color: rgb(19, 18, 18);
 }
 
-.board .orange {
-  background-color: rgba(254,104,4);
-  border: 2mm ridge rgba(206, 95, 21, 0.6);
-}
-
-.board .red {
-  background-color: rgba(228,0,39);
-  border: 2mm ridge rgba(228,0,39, 0.6);
-}
-
-.board .red {
-  background-color: rgba(228,222,0);
-  border: 2mm ridge rgba(228,222,0,0.6);
+.board .cyan {
+  background-color: rgba(0,242,252);
+  border: 2mm outset rgba(38, 173, 177, 0.6);
 }
 
 .board .blue {
   background-color: rgba(0,86,253);
-  border: 2mm ridge rgba(23, 71, 165, 0.6);
+  border: 2mm outset rgba(23, 71, 165, 0.6);
+}
+
+.board .orange {
+  background-color: rgba(254,104,4);
+  border: 2mm outset rgba(206, 95, 21, 0.6);
+}
+
+.board .yellow {
+  background-color: rgba(228,222,0);
+  border: 2mm outset rgba(228,222,0,0.6);
 }
 
 .board .green {
   background-color: rgba(2,255,0);
-  border: 2mm ridge rgba(28, 187, 28, 0.6);
+  border: 2mm outset rgba(28, 187, 28, 0.6);
 }
+
 .board .pink {
   background-color: rgba(255,3,252);
-  border: 2mm ridge rgba(177, 32, 175, 0.6);
+  border: 2mm outset rgba(177, 32, 175, 0.6);
 }
-.board .cyan {
-  background-color: rgba(0,242,252);
-  border: 2mm ridge rgba(38, 173, 177, 0.6);
+
+.board .red {
+  background-color: rgba(228,0,39);
+  border: 2mm outset rgba(228,0,39, 0.6);
 }
 
 .board .spectre {

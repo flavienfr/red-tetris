@@ -1,5 +1,6 @@
 import Player from './Player'
 import Game from './Game'
+import PiecesGenerator from './PiecesGenerator'
 
 class Room{
 	constructor(room_name, player_name, host_socket){
@@ -8,8 +9,6 @@ class Room{
     this.status = 'on'
 	  this.host = new Player(player_name, host_socket)
 	  this.guest = null
-	  this.host_game = null
-	  this.guest_game = null
     this.player_size = 1
     this.listenLeaveRoom(this.host)
     this.listenLaunchGame(this.host)
@@ -26,14 +25,10 @@ class Room{
   removeGame(removeLaunchGame){
     if (removeLaunchGame)
       this.host.socket.removeAllListeners('launch_game')
-    if (this.host_game){
-      this.host_game.exit()//send reset board (+winner on board (: )
-      this.host_game = null
-    }
-    if (this.guest_game){
-      this.guest_game.exit()//send reset board (+winner on board (: )
-      this.guest_game = null
-    }
+    if (this.host && this.host.game)
+      this.host.game.exit()//send reset board (+winner on board (: )
+    if (this.guest && this.guest.game)
+      this.guest.game.exit()//send reset board (+winner on board (: )
   }
 
   quitRoomEnvent(player){
@@ -91,7 +86,7 @@ class Room{
         return 'FULL'
       else if (this.host.name == player_name)
         return 'SAMEPSEUDO'
-      else if (this.host_game && this.host_game.status === 'on')
+      else if (this.host.game)
         return 'INGAME'
       else
         return 'REACHABLE'
@@ -102,23 +97,20 @@ class Room{
   listenLaunchGame(player){
     player.socket.on("launch_game", (data, callback) => {
       console.log('Room['+ this.name +'] ' + this.player_size + ' player(s) game launch')
-      
       //TODO some check before
-      if (this.host_game && this.host_game.status == 'on')
+      if (this.host.game)
         return (callback({ code: 1, msg: "The room is in game." }))
-
       callback({ code: 0, msg: "Succed to create room." })
 
       //generator de piece
-    
-      this.host_game = new Game(this.host, this.guest, this.name)//+piece generator 
-      this.host_game.launch()
+      const generator = new PiecesGenerator()
+
+      this.host.createGame(this.guest, this, generator)
+      if (this.guest)
+        this.guest.createGame(this.host, this, generator)
   
-      //if (this.guest){
-      //  this.guest_game = new Game(this.guest, this.host, this.name)
-      //  this.guest_game.launch()
-      //}
-  
+      this.host.game.launch()
+      //this.guest ? this.guest.game.launch() : null
     })
   }
 }
