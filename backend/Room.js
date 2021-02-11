@@ -110,7 +110,7 @@ class Room{
         this.guest.createGame(this.host, this, generator)
   
       this.host.game.launch()
-      //this.guest ? this.guest.game.launch() : null
+      this.guest ? this.guest.game.launch() : null
     })
   }
 }

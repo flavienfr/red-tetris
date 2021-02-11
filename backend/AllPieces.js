@@ -1,3 +1,5 @@
+export const SHEMA_SIZE = 4
+
 export const cyan = [ 
 	[
 		0,0,0,0,

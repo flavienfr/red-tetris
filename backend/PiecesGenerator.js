@@ -1,16 +1,17 @@
 import { cyan, blue, orange, yellow, green, pink, red } from './AllPieces'
 
+export const MAX_PIECES = 50
+
 class PiecesGenerator{
 
   constructor(){
-    const MAX_PIECES = 5
     this.all_pieces = [cyan, blue, orange, yellow, green, pink, red]
     this.pieces = this.randomPiecesGenerator(MAX_PIECES)
   }
 
   getPieceShema(idx){
-    const shemeId = this.pieces[idx].sheme
-    return (this.all_pieces[shemeId])
+    const shemaId = this.pieces[idx].shema
+    return (this.all_pieces[shemaId])
   }
 
   getPiecePos(idx){
@@ -22,7 +23,7 @@ class PiecesGenerator{
     for (let id = 0; id < number_pieces; ++id){
       array.push(
         {
-          sheme: this.getRandomIntInclusive(0, 6),
+          shema: this.getRandomIntInclusive(0, 6),
           pos: this.getRandomIntInclusive(0, 3)
         }
       )
