@@ -8,12 +8,21 @@ class PiecesGenerator{
     this.pieces = this.randomPiecesGenerator(MAX_PIECES)
   }
 
+  getPieceShema(idx){
+    const shemeId = this.pieces[idx].sheme
+    return (this.all_pieces[shemeId])
+  }
+
+  getPiecePos(idx){
+    return (this.pieces[idx].pos)
+  }
+
   randomPiecesGenerator(number_pieces){
     let array = []
     for (let id = 0; id < number_pieces; ++id){
       array.push(
         {
-          piece: this.getRandomIntInclusive(0, 6),
+          sheme: this.getRandomIntInclusive(0, 6),
           pos: this.getRandomIntInclusive(0, 3)
         }
       )

@@ -20,9 +20,24 @@ function EmptyBoard(){
   )
 }
 
+function KeyHandler(e){
+  console.log('key_input:', e.keyCode, e.type)
+  socket.emit('key_input', e.keyCode, e.type)
+}
+
 function Room() {
   const { room, player_name} = useParams()
   const history = useHistory()
+
+  useEffect(() => {
+    document.addEventListener('keydown', KeyHandler)
+    document.addEventListener('keyup', KeyHandler);
+
+    return() => {
+      document.removeEventListener('keydown', KeyHandler)
+      document.removeEventListener('keyup', KeyHandler)
+    }
+  }, [])
 
   const [btnStart, setBtnStart] = useState(true)
   const [loading, setLoading] = useState(true)
