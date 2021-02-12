@@ -7,6 +7,7 @@ class PiecesManager{
     this.cur_gnt_piece = 0
     this.cur_piece_shema = this.gnt.getPieceShema(0)
     this.cur_piece_pos = this.gnt.getPiecePos(0)
+    this.cur_piece_color = this.gnt.getPieceColor(0)
 
     this.last_x
     this.last_y
@@ -16,10 +17,10 @@ class PiecesManager{
   }
 
   initPosition(){
-    this.last_x = 3
-    this.last_y = 0
+    this.last_x = 2
+    this.last_y = 3//TODO:GRAVE ??
     this.cur_x = 3
-    this.cur_y = 0//tmp start 0
+    this.cur_y = 2
   }
 
   left(){ this.last_x = this.cur_x-- }
@@ -36,13 +37,19 @@ class PiecesManager{
       this.cur_gnt_piece = 0
     this.cur_piece_shema = this.gnt.getPieceShema(this.cur_gnt_piece)
     this.cur_piece_pos = this.gnt.getPiecePos(this.cur_gnt_piece)
-    //return (this.cur_piece_shema[this.cur_piece_pos])
+    this.cur_piece_color = this.gnt.getPieceColor(this.cur_gnt_piece)
   }
 
   rotate(){
     if (++this.cur_piece_pos > 3)
       this.cur_piece_pos = 0
-    //return (this.cur_piece_shema[this.cur_piece_pos])
+  }
+
+  getRotate(){
+    let tmp_pos = this.cur_piece_pos + 1
+    if (tmp_pos > 3)
+      tmp_pos = 0
+    return (this.cur_piece_shema[tmp_pos])
   }
 }
 

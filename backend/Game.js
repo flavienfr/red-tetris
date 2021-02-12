@@ -3,6 +3,7 @@ import PiecesManager from './PiecesManager'
 import { SHEMA_SIZE } from './AllPieces'
 
 const NORMAL_SPEED = 500
+const FAST_SPEED = 100
 const ROWS = 20 
 const COLS = 10
 const BOARD_SIZE = 200
@@ -13,7 +14,7 @@ class Game{
     this.host = host
     this.guest = guest
     this.mainBoard = Array.from({length: BOARD_SIZE}, () => ( 'empty' ))
-    this.pieces_manager = new PiecesManager(generator)
+    this.pc = new PiecesManager(generator)
 
     this.keysListener(this.host.socket)
     this.host.socket.join(this.room.name)
@@ -21,6 +22,7 @@ class Game{
       this.guest.socket.join(this.room.name)
     this.interval = null
     this.speed = NORMAL_SPEED
+    this.isNewPiece = true
   }
 
   emitBoard(){
@@ -30,7 +32,26 @@ class Game{
     })
   }
 
+  getSpectrePos(col, row, piece){
+    let tmp_row = row
+    while (this.isEmptyArea(col, row + 1, piece)){
+      ++row
+    }
+    if(tmp_row == row)
+      return null
+    return ([col, row]) 
+  }
+
+  drawPieceSpectre(col, row, piece, color){
+    this.drawPiece(col, row, piece, color)
+    const pos = this.getSpectrePos(col, row, piece)
+    if (pos === null)
+      return
+    this.drawPiece(pos[0], pos[1], piece, color + ' spectre')
+  }
+
   drawPiece(col, row, piece, color){
+    //TODO draw spectre
     for(let y = row; y < (row + SHEMA_SIZE); ++y){
       for(let x = col; x < (col + SHEMA_SIZE); ++x){
         const x_shema = x -col
@@ -44,41 +65,42 @@ class Game{
   isEmptyArea(col, row, piece){
     for(let y = row; y < (row + SHEMA_SIZE); ++y){
       for(let x = col; x < (col + SHEMA_SIZE); ++x){
-        const x_shema = x -col
+        const x_shema = x - col
         const y_shema = y - row
         const box = y * COLS + x
 
         if (piece[y_shema * SHEMA_SIZE + x_shema] == 1 &&
-            ( box < 0 || box >= 200 ||
-            this.mainBoard[y * COLS + x].indexOf('empty') === -1))
+            ( box < 0 || box >= 200 || x >= 10 || x < 0 ||
+            (this.mainBoard[box].indexOf('empty') === -1 &&
+            this.mainBoard[box].indexOf('spectre') === -1)))
           return(false)
       }
     }
     return(true)
   }
 
-  downSpeedNormal(){
+  downSpeed(SPEED){
+    clearInterval(this.interval)
     this.interval = setInterval(() => {
-      console.log('GAME['+this.host.name+']: DownSpeedNormal')
-      const piece_x = this.pieces_manager.cur_x
-      const piece_y = this.pieces_manager.cur_y
-      const last_piece_x = this.pieces_manager.last_x
-      const last_piece_y = this.pieces_manager.last_y
-      const piece =  this.pieces_manager.getPiece()
+      console.log('GAME['+this.host.name+']: downSpeed')
 
-      this.drawPiece(last_piece_x, last_piece_y, piece, 'empty')
-      if (this.isEmptyArea(piece_x, piece_y + 1, piece)){
-        this.pieces_manager.down()
-        this.drawPiece(piece_x, piece_y, piece, 'green')
+      const piece =  this.pc.getPiece()
+      const color = this.pc.cur_piece_color
+
+      if (!this.isNewPiece)
+        this.drawPiece(this.pc.cur_x, this.pc.cur_y, piece, 'empty')
+      if (this.isEmptyArea(this.pc.cur_x, this.pc.cur_y + 1, piece)){
+        this.isNewPiece = false
+        this.pc.down()
+        this.drawPieceSpectre(this.pc.cur_x, this.pc.cur_y, piece, color)
+        this.emitBoard()
       }
       else{
-        //si bloque delay
-        this.drawPiece(piece_x, piece_y, piece, 'green')
-        this.pieces_manager.next()
+        this.isNewPiece = true
+        this.drawPieceSpectre(this.pc.cur_x, this.pc.cur_y, piece, color)
+        this.pc.next()
       }
-      this.emitBoard()
-
-    }, NORMAL_SPEED)
+    }, SPEED)
   }
 
   keysListener(socket){
@@ -96,41 +118,56 @@ class Game{
         if (key == 38 && lastState.up === 0){
           console.log('up:', key, type)
           lastState.up = 1
+
+          const rotate_piece = this.pc.getRotate()
+          const piece =  this.pc.getPiece()
+          const color = this.pc.cur_piece_color
+
+          this.drawPiece(this.pc.cur_x, this.pc.cur_y, piece, 'empty')
+          if (!this.isNewPiece && 
+              this.isEmptyArea(this.pc.cur_x, this.pc.cur_y, rotate_piece)){
+            this.pc.rotate()
+            this.drawPieceSpectre(this.pc.cur_x, this.pc.cur_y, rotate_piece, color)
+            this.emitBoard()
+          }
         }
         else if (key == 40 && lastState.down === 0){
           console.log('down:', key, type)
           lastState.down = 1
+          this.downSpeed(FAST_SPEED)
         }
         else if (key == 37 && lastState.left === 0){
           console.log('left:', key, type)
           lastState.left = 1
 
-
-          const piece_x = this.pieces_manager.cur_x
-          const piece_y = this.pieces_manager.cur_y
-          const last_piece_x = this.pieces_manager.last_x
-          const last_piece_y = this.pieces_manager.last_y
-          const piece =  this.pieces_manager.getPiece()
-          this.drawPiece(last_piece_x, last_piece_y, piece, 'empty')
-          if (this.isEmptyArea(piece_x - 1, piece_y, piece)){
-            this.pieces_manager.left()
-            this.drawPiece(piece_x, piece_y, piece, 'green')
+          const piece =  this.pc.getPiece()
+          const color = this.pc.cur_piece_color
+          this.drawPiece(this.pc.cur_x, this.pc.cur_y, piece, 'empty')
+          if (!this.isNewPiece && 
+              this.isEmptyArea(this.pc.cur_x - 1, this.pc.cur_y, piece)){
+            this.pc.left()
+            this.drawPieceSpectre(this.pc.cur_x, this.pc.cur_y, piece, color)
+            this.emitBoard()
           }
-          else{
-            //si bloque delay
-            this.drawPiece(piece_x, piece_y, piece, 'green')
-          }
-          this.emitBoard()
-          
-
         }
         else if (key == 39 && lastState.right === 0){
           console.log('right:', key, type)
           lastState.right = 1
+
+          const piece =  this.pc.getPiece()
+          const color = this.pc.cur_piece_color
+          this.drawPiece(this.pc.cur_x, this.pc.cur_y, piece, 'empty')
+          if (!this.isNewPiece && 
+              this.isEmptyArea(this.pc.cur_x + 1, this.pc.cur_y, piece)){
+            this.pc.right()
+            this.drawPieceSpectre(this.pc.cur_x, this.pc.cur_y, piece, color)
+            this.emitBoard()
+          }
         }
         else if (key == 32 && lastState.space === 0){
           console.log('space:', key, type)
           lastState.space = 1
+          //getBottomPoint()
         }
       }
       else if (type === 'keyup'){
@@ -141,6 +178,7 @@ class Game{
         else if (key == 40){
           console.log('down:', key, type)
           lastState.down = 0
+          this.downSpeed(NORMAL_SPEED)
         }
         else if (key == 37){
           console.log('left:', key, type)
@@ -162,7 +200,7 @@ class Game{
   }
 
   launch(){
-    this.downSpeedNormal()
+    this.downSpeed(NORMAL_SPEED)
   }
   
   exit(){
