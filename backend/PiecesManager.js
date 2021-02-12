@@ -26,6 +26,12 @@ class PiecesManager{
   left(){ this.last_x = this.cur_x-- }
   right(){ this.last_x = this.cur_x++  }
   down(){ this.last_y = this.cur_y++  }
+  goTo(col, row){
+    this.last_x = this.cur_x
+    this.last_y = this.cur_y
+    this.cur_x = col
+    this.cur_y = row
+  }
 
   getPiece(){
     return (this.cur_piece_shema[this.cur_piece_pos])

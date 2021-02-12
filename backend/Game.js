@@ -42,16 +42,22 @@ class Game{
     return ([col, row]) 
   }
 
+  unDrawPiece(col, row, piece){
+    this.drawPiece(col, row, piece, 'empty')
+    this.drawPieceSpectre(col, row, piece, 'empty')
+  }
+
   drawPieceSpectre(col, row, piece, color){
-    this.drawPiece(col, row, piece, color)
     const pos = this.getSpectrePos(col, row, piece)
-    if (pos === null)
-      return
-    this.drawPiece(pos[0], pos[1], piece, color + ' spectre')
+    if (pos !== null){
+      let spectre_color = color
+      spectre_color += (color == 'empty' ? '' : ' spectre')
+      this.drawPiece(pos[0], pos[1], piece, spectre_color)
+    }
+    this.drawPiece(col, row, piece, color)
   }
 
   drawPiece(col, row, piece, color){
-    //TODO draw spectre
     for(let y = row; y < (row + SHEMA_SIZE); ++y){
       for(let x = col; x < (col + SHEMA_SIZE); ++x){
         const x_shema = x -col
@@ -72,34 +78,39 @@ class Game{
         if (piece[y_shema * SHEMA_SIZE + x_shema] == 1 &&
             ( box < 0 || box >= 200 || x >= 10 || x < 0 ||
             (this.mainBoard[box].indexOf('empty') === -1 &&
-            this.mainBoard[box].indexOf('spectre') === -1)))
+            this.mainBoard[box].indexOf('spectre') === -1 &&
+            this.mainBoard[box].indexOf('move') === -1)))
           return(false)
       }
     }
     return(true)
   }
 
+  down(){
+    const piece =  this.pc.getPiece()
+    const color = this.pc.cur_piece_color
+
+    if (!this.isNewPiece)
+      this.unDrawPiece(this.pc.cur_x, this.pc.cur_y, piece, 'empty')
+    if (this.isEmptyArea(this.pc.cur_x, this.pc.cur_y + 1, piece)){
+      this.isNewPiece = false
+      this.pc.down()
+      this.drawPieceSpectre(this.pc.cur_x, this.pc.cur_y, piece, color + ' move')
+      this.emitBoard()
+    }
+    else{
+      this.isNewPiece = true
+      this.drawPieceSpectre(this.pc.cur_x, this.pc.cur_y, piece, color)
+      this.pc.next()
+    }
+  }
+
   downSpeed(SPEED){
     clearInterval(this.interval)
+    this.down()
     this.interval = setInterval(() => {
       console.log('GAME['+this.host.name+']: downSpeed')
-
-      const piece =  this.pc.getPiece()
-      const color = this.pc.cur_piece_color
-
-      if (!this.isNewPiece)
-        this.drawPiece(this.pc.cur_x, this.pc.cur_y, piece, 'empty')
-      if (this.isEmptyArea(this.pc.cur_x, this.pc.cur_y + 1, piece)){
-        this.isNewPiece = false
-        this.pc.down()
-        this.drawPieceSpectre(this.pc.cur_x, this.pc.cur_y, piece, color)
-        this.emitBoard()
-      }
-      else{
-        this.isNewPiece = true
-        this.drawPieceSpectre(this.pc.cur_x, this.pc.cur_y, piece, color)
-        this.pc.next()
-      }
+      this.down()
     }, SPEED)
   }
 
@@ -123,11 +134,10 @@ class Game{
           const piece =  this.pc.getPiece()
           const color = this.pc.cur_piece_color
 
-          this.drawPiece(this.pc.cur_x, this.pc.cur_y, piece, 'empty')
-          if (!this.isNewPiece && 
-              this.isEmptyArea(this.pc.cur_x, this.pc.cur_y, rotate_piece)){
+          this.unDrawPiece(this.pc.cur_x, this.pc.cur_y, piece, 'empty')
+          if (!this.isNewPiece && this.isEmptyArea(this.pc.cur_x, this.pc.cur_y, rotate_piece)){
             this.pc.rotate()
-            this.drawPieceSpectre(this.pc.cur_x, this.pc.cur_y, rotate_piece, color)
+            this.drawPieceSpectre(this.pc.cur_x, this.pc.cur_y, rotate_piece, color + ' move')
             this.emitBoard()
           }
         }
@@ -142,11 +152,11 @@ class Game{
 
           const piece =  this.pc.getPiece()
           const color = this.pc.cur_piece_color
-          this.drawPiece(this.pc.cur_x, this.pc.cur_y, piece, 'empty')
-          if (!this.isNewPiece && 
-              this.isEmptyArea(this.pc.cur_x - 1, this.pc.cur_y, piece)){
+
+          this.unDrawPiece(this.pc.cur_x, this.pc.cur_y, piece, 'empty')
+          if (!this.isNewPiece && this.isEmptyArea(this.pc.cur_x - 1, this.pc.cur_y, piece)){
             this.pc.left()
-            this.drawPieceSpectre(this.pc.cur_x, this.pc.cur_y, piece, color)
+            this.drawPieceSpectre(this.pc.cur_x, this.pc.cur_y, piece, color + ' move')
             this.emitBoard()
           }
         }
@@ -156,18 +166,36 @@ class Game{
 
           const piece =  this.pc.getPiece()
           const color = this.pc.cur_piece_color
-          this.drawPiece(this.pc.cur_x, this.pc.cur_y, piece, 'empty')
-          if (!this.isNewPiece && 
-              this.isEmptyArea(this.pc.cur_x + 1, this.pc.cur_y, piece)){
+
+          this.unDrawPiece(this.pc.cur_x, this.pc.cur_y, piece, 'empty')
+          if (!this.isNewPiece && this.isEmptyArea(this.pc.cur_x + 1, this.pc.cur_y, piece)){
             this.pc.right()
-            this.drawPieceSpectre(this.pc.cur_x, this.pc.cur_y, piece, color)
+            this.drawPieceSpectre(this.pc.cur_x, this.pc.cur_y, piece, color + ' move')
             this.emitBoard()
           }
         }
         else if (key == 32 && lastState.space === 0){
           console.log('space:', key, type)
           lastState.space = 1
-          //getBottomPoint()
+
+          const piece =  this.pc.getPiece()
+          const color = this.pc.cur_piece_color
+          const next_pos = this.getSpectrePos(this.pc.cur_x, this.pc.cur_y, piece)
+          
+          this.unDrawPiece(this.pc.cur_x, this.pc.cur_y, piece, 'empty')
+          if (!this.isNewPiece && next_pos && this.isEmptyArea(next_pos[0], next_pos[1], piece)){
+            if (next_pos){
+              this.pc.goTo(next_pos[0], next_pos[1])
+              this.drawPieceSpectre(this.pc.cur_x, this.pc.cur_y, piece, color + ' move')
+              this.emitBoard()
+              
+              this.isNewPiece = true
+              this.drawPieceSpectre(this.pc.cur_x, this.pc.cur_y, piece, color)
+              this.pc.next()
+              this.downSpeed(NORMAL_SPEED)
+            }
+          }
+
         }
       }
       else if (type === 'keyup'){
