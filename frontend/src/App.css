@@ -34,7 +34,7 @@
 }
 
 .board .empty {
-  border: 1.8mm ridge rgb(91, 81, 95);
+  border: 0.6mm solid rgb(91, 81, 95);
   background-color: rgb(19, 18, 18);
 }
 

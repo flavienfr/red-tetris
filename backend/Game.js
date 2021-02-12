@@ -32,6 +32,10 @@ class Game{
     })
   }
 
+  //checkBottomLine()
+
+  //destroyLine() // drop down except move
+
   getSpectrePos(col, row, piece){
     let tmp_row = row
     while (this.isEmptyArea(col, row + 1, piece)){

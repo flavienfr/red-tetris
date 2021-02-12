@@ -9,26 +9,20 @@ class PiecesManager{
     this.cur_piece_pos = this.gnt.getPiecePos(0)
     this.cur_piece_color = this.gnt.getPieceColor(0)
 
-    this.last_x
-    this.last_y
     this.cur_x
     this.cur_y
     this.initPosition()
   }
-
+ 
   initPosition(){
-    this.last_x = 2
-    this.last_y = 3//TODO:GRAVE ??
     this.cur_x = 3
-    this.cur_y = 2
+    this.cur_y = -1
   }
 
-  left(){ this.last_x = this.cur_x-- }
-  right(){ this.last_x = this.cur_x++  }
-  down(){ this.last_y = this.cur_y++  }
+  left(){ this.cur_x-- }
+  right(){ this.cur_x++  }
+  down(){ this.cur_y++  }
   goTo(col, row){
-    this.last_x = this.cur_x
-    this.last_y = this.cur_y
     this.cur_x = col
     this.cur_y = row
   }
