@@ -16,7 +16,7 @@ class PiecesManager{
  
   initPosition(){
     this.cur_x = 3
-    this.cur_y = -1
+    this.cur_y = -2
   }
 
   left(){ this.cur_x-- }

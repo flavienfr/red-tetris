@@ -63,6 +63,8 @@ class Game{
 
   drawPiece(col, row, piece, color){
     for(let y = row; y < (row + SHEMA_SIZE); ++y){
+      if(y < 0)
+        continue
       for(let x = col; x < (col + SHEMA_SIZE); ++x){
         const x_shema = x -col
         const y_shema = y - row
@@ -74,13 +76,15 @@ class Game{
 
   isEmptyArea(col, row, piece){
     for(let y = row; y < (row + SHEMA_SIZE); ++y){
+      if(y < 0)
+        continue
       for(let x = col; x < (col + SHEMA_SIZE); ++x){
         const x_shema = x - col
         const y_shema = y - row
         const box = y * COLS + x
 
         if (piece[y_shema * SHEMA_SIZE + x_shema] == 1 &&
-            ( box < 0 || box >= 200 || x >= 10 || x < 0 ||
+            ( /*box < 0 ||*/ box >= 200 || x >= 10 || x < 0 ||
             (this.mainBoard[box].indexOf('empty') === -1 &&
             this.mainBoard[box].indexOf('spectre') === -1 &&
             this.mainBoard[box].indexOf('move') === -1)))
