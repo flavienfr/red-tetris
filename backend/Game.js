@@ -3,7 +3,7 @@ import PiecesManager from './PiecesManager'
 import { SHEMA_SIZE } from './AllPieces'
 
 const NORMAL_SPEED = 500
-const FAST_SPEED = 10
+const FAST_SPEED = 100
 const ROWS = 20 
 const COLS = 10
 const BOARD_SIZE = 200
@@ -124,29 +124,48 @@ class Game{
       this.emitBoard()
     }
     else{
-      this.isNewPiece = true
-      this.drawPieceSpectre(this.pc.cur_x, this.pc.cur_y, piece, color)
-      if (this.isEndGame()){
-        this.exit()
-        return
-      }
-      this.pc.next()
-      //this.downSpeed(NORMAL_SPEED)
+      this.spawnNewPiece()
     }
   }
 
-  downSpeed(SPEED){
-    clearInterval(this.interval)
-    this.down()
-    if (this.status === 'off'){
-      console.log('breaker', this.interval ? 'present' : 'not present')
+  spawnNewPiece(){
+    const piece =  this.pc.getPiece()
+    const color = this.pc.cur_piece_color
+
+    this.isNewPiece = true
+    this.drawPieceSpectre(this.pc.cur_x, this.pc.cur_y, piece, color)
+
+    if (this.isEndGame()){
+      this.emitBoard()
+      this.exit()
       return
     }
-    //delay
+    this.pc.next()
+    this.down()
+  }
+
+  downSpeedLoop(SPEED){
+    clearInterval(this.interval)
+    this.down()
+
+    if (this.status === 'off'){console.log('breaker', this.interval ? 'present' : 'not present'); return }//TODO DELETE ME 
+
     this.interval = setInterval(() => {
-      console.log('GAME['+this.host.name+']: downSpeed')
+      console.log('GAME['+this.host.name+']: downSpeedLoop')
       this.down()
     }, SPEED)
+  }
+
+  lateralMove(way, lateralFunc){
+    const piece =  this.pc.getPiece()
+    const color = this.pc.cur_piece_color
+
+    this.unDrawPiece(this.pc.cur_x, this.pc.cur_y, piece, 'empty')
+    if (!this.isNewPiece && this.isEmptyArea(this.pc.cur_x + way, this.pc.cur_y, piece)){
+      lateralFunc()//iiciciic
+      this.drawPieceSpectre(this.pc.cur_x, this.pc.cur_y, piece, color + ' move')
+      this.emitBoard()
+    }
   }
 
   keysListener(socket){
@@ -179,7 +198,8 @@ class Game{
         else if (key == 40 && lastState.down === 0){
           console.log('down:', key, type)
           lastState.down = 1
-          this.downSpeed(FAST_SPEED)
+          //TODO delay anti bourinnage
+          this.downSpeedLoop(FAST_SPEED)
         }
         else if (key == 37 && lastState.left === 0){
           console.log('left:', key, type)
@@ -199,6 +219,8 @@ class Game{
           console.log('right:', key, type)
           lastState.right = 1
 
+          this.lateralMove(1, this.pc.right)
+/*
           const piece =  this.pc.getPiece()
           const color = this.pc.cur_piece_color
 
@@ -207,27 +229,20 @@ class Game{
             this.pc.right()
             this.drawPieceSpectre(this.pc.cur_x, this.pc.cur_y, piece, color + ' move')
             this.emitBoard()
-          }
+          }*/
         }
         else if (key == 32 && lastState.space === 0){
           console.log('space:', key, type)
           lastState.space = 1
-//TODO mettre un delay
+
           const piece =  this.pc.getPiece()
-          const color = this.pc.cur_piece_color
           const next_pos = this.getSpectrePos(this.pc.cur_x, this.pc.cur_y, piece)
           
           this.unDrawPiece(this.pc.cur_x, this.pc.cur_y, piece, 'empty')
           if (!this.isNewPiece && next_pos && this.isEmptyArea(next_pos[0], next_pos[1], piece)){
             if (next_pos){
               this.pc.goTo(next_pos[0], next_pos[1])
-              this.drawPieceSpectre(this.pc.cur_x, this.pc.cur_y, piece, color + ' move')
-              this.emitBoard()
-              
-              //this.isNewPiece = true
-              //this.drawPieceSpectre(this.pc.cur_x, this.pc.cur_y, piece, color)
-              //this.pc.next()
-              //this.downSpeed(NORMAL_SPEED)
+              this.spawnNewPiece()
             }
           }
 
@@ -241,7 +256,7 @@ class Game{
         else if (key == 40){
           console.log('down:', key, type)
           lastState.down = 0
-          this.downSpeed(NORMAL_SPEED)
+          this.downSpeedLoop(NORMAL_SPEED)
         }
         else if (key == 37){
           console.log('left:', key, type)
@@ -263,7 +278,7 @@ class Game{
   }
 
   launch(){
-    this.downSpeed(NORMAL_SPEED)
+    this.downSpeedLoop(NORMAL_SPEED)
   }
   
   exit(){
