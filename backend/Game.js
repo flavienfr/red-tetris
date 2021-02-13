@@ -3,7 +3,7 @@ import PiecesManager from './PiecesManager'
 import { SHEMA_SIZE } from './AllPieces'
 
 const NORMAL_SPEED = 500
-const FAST_SPEED = 100
+const FAST_SPEED = 10
 const ROWS = 20 
 const COLS = 10
 const BOARD_SIZE = 200
@@ -23,6 +23,7 @@ class Game{
     this.interval = null
     this.speed = NORMAL_SPEED
     this.isNewPiece = true
+    this.status = 'on'
   }
 
   emitBoard(){
@@ -87,11 +88,24 @@ class Game{
             ( /*box < 0 ||*/ box >= 200 || x >= 10 || x < 0 ||
             (this.mainBoard[box].indexOf('empty') === -1 &&
             this.mainBoard[box].indexOf('spectre') === -1 &&
-            this.mainBoard[box].indexOf('move') === -1)))
-          return(false)
+            this.mainBoard[box].indexOf('move') === -1))){
+              return(false)
+            }
       }
     }
     return(true)
+  }
+
+  isEndGame(){
+    for(let x = 0; x < COLS; ++x){
+      if (this.mainBoard[x].indexOf('empty') === -1 &&
+          this.mainBoard[x].indexOf('spectre') === -1 &&
+          this.mainBoard[x].indexOf('move') === -1){
+            console.log('the end')
+            return (true)
+          }
+    }
+    return (false)
   }
 
   down(){
@@ -109,13 +123,23 @@ class Game{
     else{
       this.isNewPiece = true
       this.drawPieceSpectre(this.pc.cur_x, this.pc.cur_y, piece, color)
+      if (this.isEndGame()){
+        this.exit()
+        return
+      }
       this.pc.next()
+      //this.downSpeed(NORMAL_SPEED)
     }
   }
 
   downSpeed(SPEED){
     clearInterval(this.interval)
     this.down()
+    if (this.status === 'off'){
+      console.log('breaker', this.interval ? 'present' : 'not present')
+      return
+    }
+    //delay
     this.interval = setInterval(() => {
       console.log('GAME['+this.host.name+']: downSpeed')
       this.down()
@@ -185,7 +209,7 @@ class Game{
         else if (key == 32 && lastState.space === 0){
           console.log('space:', key, type)
           lastState.space = 1
-
+//TODO mettre un delay
           const piece =  this.pc.getPiece()
           const color = this.pc.cur_piece_color
           const next_pos = this.getSpectrePos(this.pc.cur_x, this.pc.cur_y, piece)
@@ -197,10 +221,10 @@ class Game{
               this.drawPieceSpectre(this.pc.cur_x, this.pc.cur_y, piece, color + ' move')
               this.emitBoard()
               
-              this.isNewPiece = true
-              this.drawPieceSpectre(this.pc.cur_x, this.pc.cur_y, piece, color)
-              this.pc.next()
-              this.downSpeed(NORMAL_SPEED)
+              //this.isNewPiece = true
+              //this.drawPieceSpectre(this.pc.cur_x, this.pc.cur_y, piece, color)
+              //this.pc.next()
+              //this.downSpeed(NORMAL_SPEED)
             }
           }
 
@@ -240,17 +264,22 @@ class Game{
   }
   
   exit(){
-    console.log('Room['+this.room.name+'] Player['+this.host.name+'] quit')
+    console.log('exit')
+    //console.log('Room['+this.room.name+'] Player['+this.host.name+'] quit')
     this.mainBoard = Array.from({length: BOARD_SIZE}, () => ( 'empty' ))
-    this.emitBoard()
+    //this.emitBoard()
 
+    clearInterval(this.interval)
+    this.status = 'off'
     this.host.socket.removeAllListeners("key_input")
     this.host.socket.leave(this.room.name)
     this.host.closeGame()
+    //this.room.removeGame(true)//this.guest.launch... winner
+    //this.host = null
     this.guest = null
     this.room = null
+    console.log('-----')
 
-    clearInterval(this.interval)
     //this.status = 'off'
     //demonter room socket 
   }
