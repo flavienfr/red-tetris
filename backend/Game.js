@@ -8,6 +8,9 @@ const ROWS = 20
 const COLS = 10
 const BOARD_SIZE = 200
 
+//space et next quick find solution
+//erase
+
 class Game{
   constructor(host, guest, room, generator){
     this.room = room
