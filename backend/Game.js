@@ -4,12 +4,17 @@ import { SHEMA_SIZE } from './AllPieces'
 
 const NORMAL_SPEED = 500
 const FAST_SPEED = 100
+const LATERAL_SPEED = 125
+
 const ROWS = 20 
 const COLS = 10
-const BOARD_SIZE = 200
+const BOARD_SIZE = COLS * ROWS
 
-//space et next quick find solution
-//erase
+//BUG when speed top left right move not here so end of game
+//END GAME winner delete clean
+//Jouablite: left right to improve copie real game
+
+//Mode celui qui color le + de case
 
 class Game{
   constructor(host, guest, room, generator){
@@ -24,9 +29,10 @@ class Game{
     if (this.guest)
       this.guest.socket.join(this.room.name)
     this.interval = null
-    this.speed = NORMAL_SPEED
     this.isNewPiece = true
     this.status = 'on'
+    this.leftInterval = null
+    this.rightInterval = null
   }
 
   emitBoard(){
@@ -36,9 +42,45 @@ class Game{
     })
   }
 
-  //checkBottomLine()
+  isFullLine(row){
+    let nbComplete = 0
+  
+    for(let i = row * COLS; i < row * COLS + COLS; ++i){
+      if (this.mainBoard[i].indexOf('empty') === -1 &&
+          this.mainBoard[i].indexOf('spectre') === -1 &&
+          this.mainBoard[i].indexOf('move') === -1)
+        ++nbComplete
+    }
+    if (nbComplete === COLS){
+      console.log('FULL LINE')
+      return true
+    }
+    return false
+  }
 
   //destroyLine() // drop down except move
+  /*destroyBottomLine(){
+    console.log('delete')
+    for(let y = ROWS - 1; y > 0; --y){
+      for(let x = 0; x < COLS; ++x){
+        const top_box = (y - 1) * COLS + x
+        const bot_box = y * COLS + x
+        this.mainBoard[bot_box] = this.mainBoard[top_box]
+      }
+    }
+  }*/
+
+  searchAndDestroyLine(){
+    let row = ROWS - 1
+
+    while(row > 0){
+      start_row = row
+      while (this.isFullLine(row)){
+        //icicici
+      }
+      --row;
+    }
+  }
 
   getSpectrePos(col, row, piece){
     let tmp_row = row
@@ -134,12 +176,12 @@ class Game{
 
     this.isNewPiece = true
     this.drawPieceSpectre(this.pc.cur_x, this.pc.cur_y, piece, color)
-
     if (this.isEndGame()){
       this.emitBoard()
       this.exit()
       return
     }
+    this.searchAndDestroyLine()
     this.pc.next()
     this.down()
   }
@@ -151,7 +193,6 @@ class Game{
     if (this.status === 'off'){console.log('breaker', this.interval ? 'present' : 'not present'); return }//TODO DELETE ME 
 
     this.interval = setInterval(() => {
-      console.log('GAME['+this.host.name+']: downSpeedLoop')
       this.down()
     }, SPEED)
   }
@@ -162,7 +203,7 @@ class Game{
 
     this.unDrawPiece(this.pc.cur_x, this.pc.cur_y, piece, 'empty')
     if (!this.isNewPiece && this.isEmptyArea(this.pc.cur_x + way, this.pc.cur_y, piece)){
-      lateralFunc()//iiciciic
+      lateralFunc()
       this.drawPieceSpectre(this.pc.cur_x, this.pc.cur_y, piece, color + ' move')
       this.emitBoard()
     }
@@ -203,33 +244,31 @@ class Game{
         }
         else if (key == 37 && lastState.left === 0){
           console.log('left:', key, type)
+          if (lastState.right === 1 && lastState.left === 1)
+            return
           lastState.left = 1
 
-          const piece =  this.pc.getPiece()
-          const color = this.pc.cur_piece_color
-
-          this.unDrawPiece(this.pc.cur_x, this.pc.cur_y, piece, 'empty')
-          if (!this.isNewPiece && this.isEmptyArea(this.pc.cur_x - 1, this.pc.cur_y, piece)){
-            this.pc.left()
-            this.drawPieceSpectre(this.pc.cur_x, this.pc.cur_y, piece, color + ' move')
-            this.emitBoard()
-          }
+          this.lateralMove(-1, this.pc.left.bind(this.pc))
+          //delay
+          this.leftInterval = setInterval(() => {
+            if (lastState.left === 1 && lastState.right === 1)
+              return
+            this.lateralMove(-1, this.pc.left.bind(this.pc))
+          }, LATERAL_SPEED)
         }
         else if (key == 39 && lastState.right === 0){
           console.log('right:', key, type)
+          if (lastState.left === 1 && lastState.right === 1)
+            return
           lastState.right = 1
 
-          this.lateralMove(1, this.pc.right)
-/*
-          const piece =  this.pc.getPiece()
-          const color = this.pc.cur_piece_color
-
-          this.unDrawPiece(this.pc.cur_x, this.pc.cur_y, piece, 'empty')
-          if (!this.isNewPiece && this.isEmptyArea(this.pc.cur_x + 1, this.pc.cur_y, piece)){
-            this.pc.right()
-            this.drawPieceSpectre(this.pc.cur_x, this.pc.cur_y, piece, color + ' move')
-            this.emitBoard()
-          }*/
+          this.lateralMove(1, this.pc.right.bind(this.pc))
+          //delay
+          this.rightInterval = setInterval(() => {
+            if (lastState.left === 1 && lastState.right === 1)
+              return
+            this.lateralMove(1, this.pc.right.bind(this.pc))
+          }, LATERAL_SPEED)
         }
         else if (key == 32 && lastState.space === 0){
           console.log('space:', key, type)
@@ -261,11 +300,12 @@ class Game{
         else if (key == 37){
           console.log('left:', key, type)
           lastState.left = 0
-
+          clearInterval(this.leftInterval)
         }
         else if (key == 39){
           console.log('right:', key, type)
           lastState.right = 0
+          clearInterval(this.rightInterval)
         }
         else if (key == 32){
           console.log('space:', key, type)
