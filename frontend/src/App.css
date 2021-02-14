@@ -73,8 +73,14 @@
   border: 2mm outset rgba(228,0,39, 0.6);
 }
 
+.board .move{
+  /*background-color: rgb(255, 255, 255);*/
+  box-shadow: 0 0 10px 5px rgb(255, 255, 255);
+}
+
 .board .spectre {
   background-color: transparent;
+  box-shadow: none;
   /*opacity: 0.6;*/
 }
 

@@ -30,7 +30,7 @@ class PiecesGenerator{
       array.push(
         {
           shema: random_piece,
-          pos: 0,/*this.getRandomIntInclusive(0, 3)*/
+          pos: 0,
           color: this.all_pieces_color[random_piece]
         }
       )
