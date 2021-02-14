@@ -4,17 +4,18 @@ import { SHEMA_SIZE } from './AllPieces'
 
 const NORMAL_SPEED = 750
 const FAST_SPEED = 50
-const LATERAL_SPEED = 125
-const LATERAL_DELAY = 200//ici
+const LATERAL_SPEED = 50
+const LATERAL_DELAY = 100
+const DOWN_DELAY = 150
 
 const ROWS = 20 
 const COLS = 10
 const BOARD_SIZE = COLS * ROWS
 
-//BUG when speed top left right move not here so end of game
 //END GAME winner delete clean
-//Jouablite: left right to improve copie real game
-//Spawn need reboot interval
+//Jouablite: 
+//      - same delay when on obstacle
+//      - Spawn need reboot interval
 
 //Mode celui qui color le + de case
 
@@ -23,18 +24,25 @@ class Game{
     this.room = room
     this.host = host
     this.guest = guest
+    this.status = 'on'
+    this.game_type = 'solo_score'
+    if (this.guest)
+      this.initMultiplayer()
     this.mainBoard = Array.from({length: BOARD_SIZE}, () => ( 'empty' ))
     this.pc = new PiecesManager(generator)
-
     this.keysListener(this.host.socket)
     this.host.socket.join(this.room.name)
-    if (this.guest)
-      this.guest.socket.join(this.room.name)
     this.interval = null
     this.isNewPiece = true
-    this.status = 'on'
     this.leftInterval = null
     this.rightInterval = null
+    this.score = 0
+    this.penalty = 0
+  }
+
+  initMultiplayer(){
+    this.guest.socket.join(this.room.name)
+    this.game_type = 'duo_last_in'
   }
 
   emitBoard(){
@@ -50,7 +58,8 @@ class Game{
     for(let i = row * COLS; i < row * COLS + COLS; ++i){
       if (this.mainBoard[i].indexOf('empty') === -1 &&
           this.mainBoard[i].indexOf('spectre') === -1 &&
-          this.mainBoard[i].indexOf('move') === -1)
+          this.mainBoard[i].indexOf('move') === -1 &&
+          this.mainBoard[i].indexOf('indestructible') === -1)
         ++nbComplete
     }
     if (nbComplete === COLS)
@@ -58,7 +67,20 @@ class Game{
     return false
   }
 
-  //destroyLine() // drop down except move
+  drawPenaltyLine(lines){
+    let start_row = ROWS
+    while (this.mainBoard[(--start_row) * COLS] === 'indestructible');
+    for(let y = start_row; y > start_row - lines; --y){
+      for(let x = 0; x < COLS; ++x){
+        this.mainBoard[y * COLS + x] = 'indestructible'
+      }
+    }
+  }
+  
+  givePenalty(penalty){
+    this.penalty += penalty
+  }
+
   destroyLine(bot_row, top_row){
     for(; top_row >= 0; --top_row, --bot_row){
       for(let x = 0; x < COLS; ++x){
@@ -75,6 +97,15 @@ class Game{
     }
   }
 
+  setScoreAndPenalty(points){
+    console.log('score: '+ this.score+' +'+ points)
+    this.score += points
+    if (this.game_type === 'duo_last_in'){
+      console.log('penalty')
+      this.guest.game.givePenalty(points)
+    }
+  }
+
   searchAndDestroyLine(){
     let row = ROWS - 1
 
@@ -84,6 +115,7 @@ class Game{
         while (this.isFullLine(nxt_row))
           --nxt_row
         this.destroyLine(row, nxt_row)
+        this.setScoreAndPenalty(row - nxt_row)
       }
       else
         --row;
@@ -194,6 +226,10 @@ class Game{
       return
     }
     this.searchAndDestroyLine()
+    if (this.penalty){
+      this.drawPenaltyLine(this.penalty)
+      this.penalty = 0
+    }
     this.pc.next()
     this.down()
   }
@@ -230,11 +266,15 @@ class Game{
       right: 0,
       space: 0,
     }
+    let left_click = 0
+    let right_click = 0
+    let down_click = 0
+    let is_down = false
 
     socket.on('key_input', (key, type) => {
       if (type === 'keydown'){
         if (key == 38 && state.up === 0){
-          console.log('up:', key, type)
+          //console.log('up:', key, type)
           state.up = 1
 
           const rotate_piece = this.pc.getRotate()
@@ -249,48 +289,53 @@ class Game{
           }
         }
         else if (key == 40 && state.down === 0){
-          console.log('down:', key, type)
+          //console.log('down:', key, type)
           state.down = 1
-          //TODO delay anti bourinnage
-          this.downSpeedLoop(FAST_SPEED)
+
+          const save_down_click = down_click
+          is_down = false
+         // setTimeout(() => { do smeting
+            if (save_down_click !== down_click)
+              return
+            is_down = true
+            this.downSpeedLoop(FAST_SPEED)
+         // }, DOWN_DELAY)
         }
         else if (key == 37 && state.left === 0){
-          console.log('left:', key, type)
-          //if (state.right === 1 && state.left === 1)
-          //  return
+          //console.log('left:', key, type)
           state.left = 1
 
           this.lateralMove(-1, this.pc.left.bind(this.pc))
-          //setTimeout(() => {
-            if (state.left !== 1)
-                return
+          const save_left_click = left_click
+          setTimeout(() => {
+            if (save_left_click !== left_click)
+              return
             this.leftInterval = setInterval(() => {
               if (state.left === 1 && state.right === 1)
                 return
               this.lateralMove(-1, this.pc.left.bind(this.pc))
             }, LATERAL_SPEED)
-          //}, LATERAL_DELAY)
+          }, LATERAL_DELAY)
 
         }
         else if (key == 39 && state.right === 0){
-          console.log('right:', key, type)
-          //if (state.left === 1 && state.right === 1)
-          //  return
+          //console.log('right:', key, type)
           state.right = 1
 
-          this.lateralMove(1, this.pc.right.bind(this.pc))      
-          //setTimeout(() => {
-            if (state.right !== 1)
-                return
+          this.lateralMove(1, this.pc.right.bind(this.pc))   
+          const save_right_click = right_click
+          setTimeout(() => {
+            if (save_right_click !== right_click)
+              return
             this.rightInterval = setInterval(() => {
               if (state.left === 1 && state.right === 1)
                 return
               this.lateralMove(1, this.pc.right.bind(this.pc))
             }, LATERAL_SPEED)
-          //}, LATERAL_DELAY)
+          }, LATERAL_DELAY)
         }
         else if (key == 32 && state.space === 0){
-          console.log('space:', key, type)
+          //console.log('space:', key, type)
           state.space = 1
 
           const piece =  this.pc.getPiece()
@@ -307,26 +352,31 @@ class Game{
       }
       else if (type === 'keyup'){
         if (key == 38){
-          console.log('up:', key, type)
+          //console.log('up:', key, type)
           state.up = 0
         }
         else if (key == 40){
-          console.log('down:', key, type)
+          //console.log('down:', key, type)
           state.down = 0
+          ++down_click
+          if(is_down !== true)
+            return
           this.downSpeedLoop(NORMAL_SPEED)
         }
         else if (key == 37){
-          console.log('left:', key, type)
+          //console.log('left:', key, type)
           state.left = 0
+          ++left_click
           clearInterval(this.leftInterval)
         }
         else if (key == 39){
-          console.log('right:', key, type)
+          //console.log('right:', key, type)
           state.right = 0
+          ++right_click
           clearInterval(this.rightInterval)
         }
         else if (key == 32){
-          console.log('space:', key, type)
+          //console.log('space:', key, type)
           state.space = 0
         }
       }
@@ -338,11 +388,12 @@ class Game{
   launch(){
     this.downSpeedLoop(NORMAL_SPEED)
   }
+
+
   
   exit(){
-    console.log('exit')
-    //console.log('Room['+this.room.name+'] Player['+this.host.name+'] quit')
-    this.mainBoard = Array.from({length: BOARD_SIZE}, () => ( 'empty' ))
+    console.log('Room['+this.room.name+'] Player['+this.host.name+'] quit')
+    //this.mainBoard = Array.from({length: BOARD_SIZE}, () => ( 'empty' ))
     //this.emitBoard()
 
     clearInterval(this.interval)

@@ -23,7 +23,7 @@ class Room{
   }
 
   removeGame(removeLaunchGame){
-    console.log('ici')
+    console.log('removeGame from remove')
     if (removeLaunchGame)
       this.host.socket.removeAllListeners('launch_game')
     if (this.host && this.host.game)
