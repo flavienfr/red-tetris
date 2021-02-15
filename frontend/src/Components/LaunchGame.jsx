@@ -1,7 +1,7 @@
 import Button from 'react-bootstrap/Button'
 import { socket } from '../App'
 
-function Game({btnStart, setBtnStart}){
+function Game({btnStart, setBtnStart, setIsWinner}){
   function handleStartGame(){
     console.log('handleStartGame')
 

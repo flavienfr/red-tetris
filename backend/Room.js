@@ -18,15 +18,17 @@ class Room{
     this.host.socket.emit('roomInfo', {
       playerSize: this.player_size,
       isHost: true,
-      reset: true
+      reset: true,
+      iswinner: null
     })
   }
 
-  emitRoomInfo_2(player, ishost){
+  emitRoomInfo_2(player, ishost, reset, iswinner){
     player.socket.emit('roomInfo', {
       playerSize: this.player_size,
       isHost: ishost,
-      reset: true
+      reset: reset,
+      iswinner: iswinner
     })
   }
 
@@ -41,14 +43,20 @@ class Room{
   }
 
   endGame(winner, loser){
-    if (loser && this.host  === loser){
-      this.removeGame(true)
-      const tmp_guest = this.host
-      this.host = this.guest
-      this.guest = tmp_host
-      this.listenLaunchGame(this.host)
-      this.emitRoomInfo_2(this.host, true)
-      this.emitRoomInfo_2(this.guest, false)
+    console.log('end game')
+    console.log('loser.name',loser.name ,'this.host.name',this.host.name)
+    if (this.player_size === 2){
+      if (loser.name === this.host.name){
+        this.removeGame(true)
+        const tmp_guest = this.host
+        this.host = this.guest
+        this.guest = tmp_guest
+        this.listenLaunchGame(this.host)
+      }
+      else
+        this.removeGame(false)
+      this.emitRoomInfo_2(this.host, true, true, true)
+      this.emitRoomInfo_2(this.guest, false, true, false)
     }
     else{
       this.removeGame(false)
@@ -132,10 +140,12 @@ class Room{
       //generator de piece
       const generator = new PiecesGenerator()
 
+      this.emitRoomInfo_2(this.host, true, false, null)
       this.host.createGame(this.guest, this, generator)
-      if (this.guest)
+      if (this.guest){
+        this.emitRoomInfo_2(this.guest, false, false, null)
         this.guest.createGame(this.host, this, generator)
-  
+      }  
       this.host.game.launch()
       this.guest ? this.guest.game.launch() : null
     })

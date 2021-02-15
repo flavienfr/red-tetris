@@ -78,6 +78,7 @@ function Room() {
 
   const [ playerSize, setPlayerSize ] = useState(1)
   const [ isHost, setIsHoste ] = useState(true)
+  const [ isWinner, setIsWinner ] = useState(null)
   useEffect(()=>{
     socket.on('roomInfo', (data) => {
       console.log('roomINfo:', data)
@@ -85,6 +86,8 @@ function Room() {
       setIsHoste(data.isHost)
       if (data.reset)
         setBtnStart(data.reset)
+      console.log('WINNER', data.iswinner)
+      setIsWinner(data.iswinner)
     })
     return() =>{
       socket.off('roomInfo')
@@ -97,6 +100,9 @@ function Room() {
 	return(
       <div className='room'>
         <h1>{room}</h1>
+        { isWinner === true ? <p>Winner</p> : null }
+        { isWinner === false ? <p>Loser</p> : null }
+
         { isHost ? <LaunchGame 
               btnStart={btnStart} 
               setBtnStart={setBtnStart}

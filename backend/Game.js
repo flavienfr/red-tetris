@@ -222,7 +222,7 @@ class Game{
     this.drawPieceSpectre(this.pc.cur_x, this.pc.cur_y, piece, color)
     if (this.isEndGame()){
       this.emitBoard()
-      this.room.endGame()
+      this.room.endGame(this.guest, this.host)
       return
     }
     this.searchAndDestroyLine()
