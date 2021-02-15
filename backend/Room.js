@@ -22,14 +22,40 @@ class Room{
     })
   }
 
-  removeGame(removeLaunchGame){
+  emitRoomInfo_2(player, ishost){
+    player.socket.emit('roomInfo', {
+      playerSize: this.player_size,
+      isHost: ishost,
+      reset: true
+    })
+  }
+
+  removeGame(removeHostLauncher){
     console.log('removeGame from remove')
-    if (removeLaunchGame)
+    if (removeHostLauncher)
       this.host.socket.removeAllListeners('launch_game')
     if (this.host && this.host.game)
       this.host.game.exit()//send reset board (+winner on board (: )
     if (this.guest && this.guest.game)
       this.guest.game.exit()//send reset board (+winner on board (: )
+  }
+
+  endGame(winner, loser){
+    if (loser && this.host  === loser){
+      this.removeGame(true)
+      const tmp_guest = this.host
+      this.host = this.guest
+      this.guest = tmp_host
+      this.listenLaunchGame(this.host)
+      this.emitRoomInfo_2(this.host, true)
+      this.emitRoomInfo_2(this.guest, false)
+    }
+    else{
+      this.removeGame(false)
+      this.emitRoomInfo()
+
+    }
+    //emit layer / winner info
   }
 
   quitRoomEnvent(player){

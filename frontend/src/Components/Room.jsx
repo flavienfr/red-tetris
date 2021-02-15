@@ -62,7 +62,7 @@ function Room() {
   const [secondBoard, setSecondBoard] = useState(EmptyBoard())
   useEffect(() => {
     socket.on('board', (data) => {
-      console.log('Board recv: ', data)
+      //console.log('Board recv: ', data)
       let recvBoard = Array.from(data.board, (color, id) => (
         <div key={id} id={ '_' + id } className={color}></div>
       ))

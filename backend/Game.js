@@ -222,7 +222,7 @@ class Game{
     this.drawPieceSpectre(this.pc.cur_x, this.pc.cur_y, piece, color)
     if (this.isEndGame()){
       this.emitBoard()
-      this.exit()
+      this.room.endGame()
       return
     }
     this.searchAndDestroyLine()
@@ -237,9 +237,6 @@ class Game{
   downSpeedLoop(SPEED){
     clearInterval(this.interval)
     this.down()
-
-    if (this.status === 'off'){console.log('breaker', this.interval ? 'present' : 'not present'); return }//TODO DELETE ME 
-
     this.interval = setInterval(() => {
       this.down()
     }, SPEED)
@@ -389,9 +386,11 @@ class Game{
     this.downSpeedLoop(NORMAL_SPEED)
   }
 
-
-  
   exit(){
+    //if (this.status = 'off'){
+    //  console.log('already deleted')
+    //  return
+    //}
     console.log('Room['+this.room.name+'] Player['+this.host.name+'] quit')
     //this.mainBoard = Array.from({length: BOARD_SIZE}, () => ( 'empty' ))
     //this.emitBoard()
@@ -404,7 +403,7 @@ class Game{
     this.host.socket.leave(this.room.name)
     this.host.closeGame()
     //this.room.removeGame(true)//this.guest.launch... winner
-    //this.host = null
+    this.host = null
     this.guest = null
     this.room = null
     console.log('-----')
