@@ -31,6 +31,9 @@ front_sh:
 back_sh:
 	docker exec -it backend_dev sh
 
+db_sh:
+	docker exec -it database mongo shell
+
 # Prune
 prune:
 	docker system prune --all --volumes

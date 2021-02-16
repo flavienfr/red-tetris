@@ -1,15 +1,15 @@
-const mongoose = require('mongoose')
-const Schema   = mongoose.Schema
+import mongoose from 'mongoose'
+const { Schema } = mongoose
 
 const leaderBoard = new Schema({
 	name: {
-			type    : String,
-			unique   : true,
-			trim    : true,
+			type: String,
+			unique: true,
+			trim: true,
 			required: [true, 'Le nom est obligatoire']
 	},
 	score: {
-			type: int,
+			type: Number,
 			trim: true
 	}
 })

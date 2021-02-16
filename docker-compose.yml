@@ -16,6 +16,7 @@ services:
       - URL_MONGO=mongodb://api:docker1234@mongo
    
   mongo:
+    container_name: database
     image: mongo:4.0
     volumes:
       - "./mongo/data:/data/db"
