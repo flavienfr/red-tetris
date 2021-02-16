@@ -48,7 +48,8 @@ class Game{
   emitBoard(){
     io.to(this.room.name).emit('board', {
       socketId: this.host.socket.id,
-      board: this.mainBoard
+      board: this.mainBoard,
+      score: this.score
     })
   }
 

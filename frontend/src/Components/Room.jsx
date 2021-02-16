@@ -60,16 +60,22 @@ function Room() {
 
   const [mainBoard, setMainBoard] = useState(EmptyBoard())
   const [secondBoard, setSecondBoard] = useState(EmptyBoard())
+  const [mainScore, setMainScore] = useState(0)
+  const [secondScore, setSecondScore] = useState(0)
   useEffect(() => {
     socket.on('board', (data) => {
       //console.log('Board recv: ', data)
       let recvBoard = Array.from(data.board, (color, id) => (
         <div key={id} id={ '_' + id } className={color}></div>
       ))
-      if (data.socketId === socket.id)
+      if (data.socketId === socket.id){
         setMainBoard(recvBoard)
-      else
+        setMainScore(data.score)
+      }
+      else{
         setSecondBoard(recvBoard)
+        setSecondScore(data.score)
+      }
     })
     return() =>{
       socket.off('board')
@@ -104,13 +110,17 @@ function Room() {
         { isWinner === false ? <p>Loser</p> : null }
 
         { isHost ? <LaunchGame 
-              btnStart={btnStart} 
-              setBtnStart={setBtnStart}
-            /> : null 
+            btnStart={btnStart} 
+            setBtnStart={setBtnStart}
+          /> : null 
         }
         <Board status='mainBoard' board={mainBoard} />
+        <p>{mainScore}</p>
         { playerSize === 2 ?
-            <Board status='secondBoard' board={secondBoard} /> : null
+          <p>{secondScore}</p> : null
+        }
+        { playerSize === 2 ?
+          <Board status='secondBoard' board={secondBoard} /> : null
         }  
       </div> 
 	)

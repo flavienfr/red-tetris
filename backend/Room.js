@@ -37,9 +37,9 @@ class Room{
     if (removeHostLauncher)
       this.host.socket.removeAllListeners('launch_game')
     if (this.host && this.host.game)
-      this.host.game.exit()//send reset board (+winner on board (: )
+      this.host.game.exit()
     if (this.guest && this.guest.game)
-      this.guest.game.exit()//send reset board (+winner on board (: )
+      this.guest.game.exit()
   }
 
   endGame(winner, loser){
