@@ -3,6 +3,8 @@ import Room from './Room'
 const express = require('express')
 const cors = require('cors')
 const HOST_PORT = 8080
+const mongodb = require('./db/mongo')//dbdb
+mongodb.initClientDbConnection();//dbdb
 const app = express()
 const server = require('http').Server(app)
 export const io = require("socket.io")(server, {

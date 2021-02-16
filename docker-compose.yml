@@ -10,3 +10,17 @@ services:
   backend:
     build:
       context: ./backend
+    links:
+      - mongo
+    environment:
+      - URL_MONGO=mongodb://api:docker1234@mongo
+   
+  mongo:
+    image: mongo:4.0
+    volumes:
+      - "./mongo/data:/data/db"
+    ports: 
+      - "27017:27017"
+    environment: 
+      - MONGO_INITDB_ROOT_USERNAME=api
+      - MONGO_INITDB_ROOT_PASSWORD=docker1234
