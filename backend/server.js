@@ -1,18 +1,46 @@
 'use strict'
 import Room from './Room'
+
+const HOST_PORT = 8080
+
 const express = require('express')
 const cors = require('cors')
-const HOST_PORT = 8080
 const mongodb = require('./db/mongo')//dbdb
+
 mongodb.initClientDbConnection();//dbdb
+
 const app = express()
 const server = require('http').Server(app)
+
 export const io = require("socket.io")(server, {
   cors: {
     origin: "http://localhost:3000", //TODO replace by * ? "http://localhost:3000"
     methods: ["GET", "POST", "PUT"]
   }
 })
+
+/* Sandbox  */
+/*async function test(){
+  const value = await leaderBoard.findOne({ name: 'toto' }).exec() //await .exec();
+  console.log('value', value)
+}*/
+
+const leaderBoard = require('./models/leaderBoard')//dbdb
+
+const score = new leaderBoard({
+	name: 'toto',
+	score: 0,
+})
+
+//test()
+
+/*
+
+score.save(function (err) {
+	if (err) return console.log(err)
+	console.log('saved!')
+})*/
+/************/
 
 let rooms = []
 

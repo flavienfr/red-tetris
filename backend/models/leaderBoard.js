@@ -14,7 +14,17 @@ const leaderBoard = new Schema({
 	}
 })
 
+async function test(){
+  const value = await leaderBoard.findOne({ name: 'totod' }).exec() //await .exec();
+	console.log('value', value)
+	return value
+}
+
 leaderBoard.pre('save', function(next) {
+	//if name exist modify score else create name score
+	//	return
+	if (test() === null)
+		return
 	console.log('Data pre save')
 	next()
 })
