@@ -13,15 +13,18 @@ services:
     links:
       - mongo
     environment:
-      - URL_MONGO=mongodb://api:docker1234@mongo
+      - URL_MONGO=mongodb://root:password@mongo
    
   mongo:
     container_name: database
     image: mongo:4.0
     volumes:
-      - "./mongo/data:/data/db"
+      - "mongodb_data_container:/data/db"
     ports: 
       - "27017:27017"
     environment: 
-      - MONGO_INITDB_ROOT_USERNAME=api
-      - MONGO_INITDB_ROOT_PASSWORD=docker1234
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=password
+
+volumes:
+  mongodb_data_container:

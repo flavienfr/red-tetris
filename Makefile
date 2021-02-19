@@ -32,7 +32,7 @@ back_sh:
 	docker exec -it backend_dev sh
 
 db_sh:
-	docker exec -it database mongo shell
+	docker exec -it database mongo admin -u root -p password
 
 # Prune
 prune:
