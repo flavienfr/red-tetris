@@ -1,6 +1,7 @@
 import Player from './Player'
 import Game from './Game'
 import PiecesGenerator from './PiecesGenerator'
+import {ldBoard} from './models/leaderBoard'
 
 class Room{
 	constructor(room_name, player_name, host_socket){
@@ -59,6 +60,12 @@ class Room{
       this.emitRoomInfo_2(this.guest, false, true, false)
     }
     else{
+      const score = new ldBoard({
+      	name: this.host.name,
+      	score: this.host.game.score,
+      })
+      score.makeItSave()
+
       this.removeGame(false)
       this.emitRoomInfo()
 

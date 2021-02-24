@@ -19,33 +19,16 @@ export const io = require("socket.io")(server, {
   }
 })
 
-/* Sandbox  */
-/*async function test(){
-  const value = await leaderBoard.findOne({ name: 'toto' }).exec() //await .exec();
-  console.log('value', value)
-}*/
-
-const leaderBoard = require('./models/leaderBoard')//dbdb
-
-const score = new leaderBoard({
-	name: 'toto',
-	score: 0,
-})
-
-//test()
-
-/*
-
-score.save(function (err) {
-	if (err) return console.log(err)
-	console.log('saved!')
-})*/
-/************/
-
 let rooms = []
 
 io.on('connection', (socket) => {
   console.log(`Client connected [${socket.id}]`)
+
+  /* leader board listener */
+    socket.on("leader_board", (data, callback) => {
+      callback({ name: "toto", score: '42' })
+    })
+  /*****************/
 
   socket.on('join_room', (data, callback) => {
     let isRoomExist = false
