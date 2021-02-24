@@ -121,7 +121,7 @@ function Room() {
         }
         { playerSize === 2 ?
           <Board status='secondBoard' board={secondBoard} /> : null
-        }  
+        }
       </div> 
 	)
 }

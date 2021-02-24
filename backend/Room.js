@@ -1,7 +1,6 @@
 import Player from './Player'
-import Game from './Game'
-import PiecesGenerator from './PiecesGenerator'
 import {ldBoard} from './models/leaderBoard'
+import PiecesGenerator from './PiecesGenerator'
 
 class Room{
 	constructor(room_name, player_name, host_socket){
@@ -14,6 +13,7 @@ class Room{
     this.listenLeaveRoom(this.host)
     this.listenLaunchGame(this.host)
   }
+
 
   emitRoomInfo(){
     this.host.socket.emit('roomInfo', {

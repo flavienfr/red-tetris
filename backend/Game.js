@@ -6,7 +6,6 @@ const NORMAL_SPEED = 750
 const FAST_SPEED = 50
 const LATERAL_SPEED = 50
 const LATERAL_DELAY = 100
-const DOWN_DELAY = 150
 
 const ROWS = 20 
 const COLS = 10
@@ -292,12 +291,10 @@ class Game{
 
           const save_down_click = down_click
           is_down = false
-         // setTimeout(() => { do smeting
-            if (save_down_click !== down_click)
-              return
-            is_down = true
-            this.downSpeedLoop(FAST_SPEED)
-         // }, DOWN_DELAY)
+          if (save_down_click !== down_click)
+            return
+          is_down = true
+          this.downSpeedLoop(FAST_SPEED)
         }
         else if (key == 37 && state.left === 0){
           //console.log('left:', key, type)

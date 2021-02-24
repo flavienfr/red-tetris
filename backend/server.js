@@ -1,5 +1,5 @@
 'use strict'
-import Room from './Room'
+import ServerManager from './ServerManager'
 
 const HOST_PORT = 8080
 
@@ -19,18 +19,22 @@ export const io = require("socket.io")(server, {
   }
 })
 
-let rooms = []
+let serverManager = new ServerManager()
 
 io.on('connection', (socket) => {
   console.log(`Client connected [${socket.id}]`)
 
-  /* leader board listener */
-    socket.on("leader_board", (data, callback) => {
-      callback({ name: "toto", score: '42' })
-    })
-  /*****************/
+  /*********/ 
+  ServerManager.joinRoom(socket)
+  ServerManager.emitLeaderBoard(socket)
+  socket.on("disconnect", () => {
+    ServerManager.leaveRoom(socket)
+  })
+  
+  /*********/
 
-  socket.on('join_room', (data, callback) => {
+  serverManager.joinRoomListener(socket)
+  /*socket.on('join_room', (data, callback) => {
     let isRoomExist = false
 
 	  rooms.forEach(function(room, index, array){
@@ -75,7 +79,7 @@ io.on('connection', (socket) => {
         reset: null
       })
     }
-  })
+  })*/
 
 })
 
