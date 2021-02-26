@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { socket } from '../App'
 
-
 function LeaderBoard() {
   const [leaderBoard, setLeaderBoard] = useState('Loading...')
 

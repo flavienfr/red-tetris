@@ -3,6 +3,7 @@ import { useParams, useHistory } from 'react-router-dom'
 import { socket } from '../App'
 import LaunchGame from './LaunchGame.jsx'
 import Board from './Board.jsx'
+import LeaderBoard from './LeaderBoard.jsx'
 
 function BackToJoinForm(code, msg, player_name, room, history){
 	const location = {
@@ -115,6 +116,7 @@ function Room() {
           /> : null 
         }
         <Board status='mainBoard' board={mainBoard} />
+        <LeaderBoard/>
         <p>{mainScore}</p>
         { playerSize === 2 ?
           <p>{secondScore}</p> : null

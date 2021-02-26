@@ -1,6 +1,7 @@
 import Player from './Player'
 import {ldBoard} from './models/leaderBoard'
 import PiecesGenerator from './PiecesGenerator'
+import ServerManager from './ServerManager'
 
 class Room{
 	constructor(room_name, player_name, host_socket){
@@ -12,6 +13,7 @@ class Room{
     this.player_size = 1
     this.listenLeaveRoom(this.host)
     this.listenLaunchGame(this.host)
+    ServerManager.emitLeaderBoard()
   }
 
 

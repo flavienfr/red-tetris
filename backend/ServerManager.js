@@ -33,7 +33,7 @@ class ServerManager{
         if (room.status == 'off')
           array.splice(index, 1)
         else {
-          const room_status =  this.room.roomStatus(data.room, data.player_name)
+          const room_status =  room.roomStatus(data.room, data.player_name)
           switch (room_status) {
             case 'FULL':
               callback({ code: 1, msg: "The room is full." })
