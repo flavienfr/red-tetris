@@ -28,37 +28,41 @@ function JoinForm(){
   
   return(
     <>
-    <h1>RED TETRIS</h1>
-    <Form onSubmit={handleSubmit}>
-      { alertMsg && 
-        <Alert  variant='danger'>
-          {alertMsg}
-        </Alert>
-      }
-      <Form.Group>
-        <Form.Label>Pseudo</Form.Label>
-        <Form.Control 
-          value={player_name}
-          onChange={ (e) => (setPlayer_name(e.target.value)) }
-          type="text"
-          placeholder="Enter pseudo"
-          required
-        />
-      </Form.Group>
-      <Form.Group>
-        <Form.Label>Room</Form.Label>
-        <Form.Control
-          value={room}
-          onChange={ (e) => (setRoom(e.target.value)) }
-          type="text"
-          placeholder="Room name"
-          required
-        />
-      </Form.Group>
-      <Button variant="primary" type="submit">
-        Join
-      </Button>
-    </Form>
+      <div className='login'>
+        <h1>RED TETRIS</h1>
+        <div className='loginForm'>
+          <Form onSubmit={handleSubmit}>
+            { alertMsg && 
+              <Alert  variant='danger'>
+                {alertMsg}
+              </Alert>
+            }
+            <Form.Group>
+              <Form.Label>Pseudo</Form.Label>
+              <Form.Control 
+                value={player_name}
+                onChange={ (e) => (setPlayer_name(e.target.value)) }
+                type="text"
+                placeholder="Enter pseudo"
+                required
+              />
+            </Form.Group>
+            <Form.Group>
+              <Form.Label>Room</Form.Label>
+              <Form.Control
+                value={room}
+                onChange={ (e) => (setRoom(e.target.value)) }
+                type="text"
+                placeholder="Room name"
+                required
+              />
+            </Form.Group>
+            <Button variant="primary" type="submit">
+              Join
+            </Button>
+          </Form>
+        </div>
+      </div>
     </>
   )
 }

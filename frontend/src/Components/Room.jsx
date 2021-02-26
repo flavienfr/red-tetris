@@ -115,8 +115,13 @@ function Room() {
             setBtnStart={setBtnStart}
           /> : null 
         }
+        
         <Board status='mainBoard' board={mainBoard} />
-        <LeaderBoard/>
+
+        { playerSize === 1 ?
+          <LeaderBoard/> : null
+        }
+        
         <p>{mainScore}</p>
         { playerSize === 2 ?
           <p>{secondScore}</p> : null
