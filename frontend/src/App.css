@@ -108,30 +108,43 @@ html, body, #root{
   flex-direction: column;
   height: 100%;
 
+  background-image: url('./media/tetris_transp.png'),
+                    linear-gradient(#e53423, #ffea60);
+  background-position: bottom;
+  background-repeat: repeat-x;
+  background-size: 600px;
+
+  
   border: solid red 1px;
 }
 
 .login h1{
   text-align: center;
   margin-top: 10px;
-  border: solid blue 1px;
+
+  color: white;
+  font-family: pacman;
+  font-size: 100px;
 }
 
 .loginForm{
   display: flex;
   flex-direction: column;
-  flex: 1 1 auto;
+  flex: 0.5 1 auto;
   justify-content: center;
   align-items: center;
-
-  border: solid green 1px;
 }
 
 .loginForm form{
-  width: 55%;
-  max-width:600px;
-  padding: 15px;
-  border: solid black 1px;
+  display: flex;
+  flex-direction: column;
+
+  width: 450px;
+  padding: 20px;
+
+  border: groove white 20px;
+  border-radius: 15px;
+  background-color: #c8c8c8;
 }
 
 /***********/

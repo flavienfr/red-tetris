@@ -6,7 +6,7 @@ import { Switch, Route } from 'react-router-dom'
 
 const io = require("socket.io-client")
 
-const apiUrl = `http://10.12.3.10:8080`
+const apiUrl = `http://localhost:8080`
 
 export const socket = io(apiUrl)
 

@@ -29,7 +29,7 @@ function JoinForm(){
   return(
     <>
       <div className='login'>
-        <h1>RED TETRIS</h1>
+        <h1>RED<br/>TETRIS</h1>
         <div className='loginForm'>
           <Form onSubmit={handleSubmit}>
             { alertMsg && 
@@ -38,17 +38,15 @@ function JoinForm(){
               </Alert>
             }
             <Form.Group>
-              <Form.Label>Pseudo</Form.Label>
               <Form.Control 
                 value={player_name}
                 onChange={ (e) => (setPlayer_name(e.target.value)) }
                 type="text"
-                placeholder="Enter pseudo"
+                placeholder="Pseudo"
                 required
               />
             </Form.Group>
             <Form.Group>
-              <Form.Label>Room</Form.Label>
               <Form.Control
                 value={room}
                 onChange={ (e) => (setRoom(e.target.value)) }
