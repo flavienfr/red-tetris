@@ -390,8 +390,6 @@ class Game{
     //  return
     //}
     console.log('Room['+this.room.name+'] Player['+this.host.name+'] quit')
-    //this.mainBoard = Array.from({length: BOARD_SIZE}, () => ( 'empty' ))
-    //this.emitBoard()
 
     clearInterval(this.interval)
     clearInterval(this.leftInterval)
@@ -404,10 +402,6 @@ class Game{
     this.host = null
     this.guest = null
     this.room = null
-    console.log('-----')
-
-    //this.status = 'off'
-    //demonter room socket 
   }
 }
 

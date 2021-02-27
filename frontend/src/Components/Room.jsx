@@ -48,7 +48,7 @@ function Room() {
       socket.emit("leave_room")
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [room, player_name])//TODO redo the bug at the end
+  }, [room, player_name])
 
   const [ playerSize, setPlayerSize ] = useState(1)
   const [ isHost, setIsHoste ] = useState(true)
@@ -70,10 +70,7 @@ function Room() {
 
   if (loading)
     return <p>loading...</p>
-/*
-  { isWinner === true ? <p>Winner</p> : null }
-  { isWinner === false ? <p>Loser</p> : null }
-*/
+
 	return(
       <div className='room'>
         <h1>{room}</h1>

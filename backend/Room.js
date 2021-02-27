@@ -81,16 +81,22 @@ class Room{
   
     if (player_size_save == 2){
       if(this.host.socket.id === player.socket.id){
+        if (this.guest.game && this.guest.game.status === 'on')
+          this.emitRoomInfo_2(this.guest, true, true, true)
+        else
+          this.emitRoomInfo_2(this.guest, true, true, null)
         this.removeGame(true)
         this.host = this.guest
         this.guest = null
         this.listenLaunchGame(this.host)
-        this.emitRoomInfo_2(this.host, true, true, null)
         console.log('Room['+ this.name +'] ' + this.host.name + ' is the new host')
       }
       else{
+        if (this.guest.game && this.guest.game.status === 'on')
+          this.emitRoomInfo_2(this.host, true, true, true)
+        else
+          this.emitRoomInfo_2(this.host, true, true, null)
         this.removeGame(false)
-        this.emitRoomInfo_2(this.host, true, true, null)
         this.guest = null
         console.log('Room['+ this.name +'] the guest left the room.')
       }
