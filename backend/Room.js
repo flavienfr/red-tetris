@@ -16,7 +16,7 @@ class Room{
     ServerManager.emitLeaderBoard()
   }
 
-
+/*
   emitRoomInfo(){
     this.host.socket.emit('roomInfo', {
       playerSize: this.player_size,
@@ -24,7 +24,7 @@ class Room{
       reset: true,
       iswinner: null
     })
-  }
+  }*/
 
   emitRoomInfo_2(player, ishost, reset, iswinner){
     player.socket.emit('roomInfo', {
@@ -69,7 +69,7 @@ class Room{
       score.makeItSave()
 
       this.removeGame(false)
-      this.emitRoomInfo()
+      this.emitRoomInfo_2(this.host, true, true, false)
 
     }
     //emit layer / winner info
@@ -85,12 +85,12 @@ class Room{
         this.host = this.guest
         this.guest = null
         this.listenLaunchGame(this.host)
-        this.emitRoomInfo()
+        this.emitRoomInfo_2(this.host, true, true, null)
         console.log('Room['+ this.name +'] ' + this.host.name + ' is the new host')
       }
       else{
         this.removeGame(false)
-        this.emitRoomInfo()
+        this.emitRoomInfo_2(this.host, true, true, null)
         this.guest = null
         console.log('Room['+ this.name +'] the guest left the room.')
       }
@@ -120,7 +120,7 @@ class Room{
     console.log('Room['+ this.name +'] ' + player_name + ' join the room.')
     this.guest = new Player(player_name, guest_socket)
     this.player_size += 1
-    this.emitRoomInfo()
+    this.emitRoomInfo_2(this.host, true, true, null)
     this.listenLeaveRoom(this.guest)
   }
 

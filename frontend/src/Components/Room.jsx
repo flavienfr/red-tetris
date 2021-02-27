@@ -13,16 +13,7 @@ function BackToJoinForm(code, msg, player_name, room, history){
 	history.replace(location)	
 }
 
-function EmptyBoard(){
-  return (
-    Array.from({length: 200}, (_, id) => (
-      <div key={id} id={ '_' + id } className='empty'></div>
-    ))
-  )
-}
-
 function KeyHandler(e){
-  console.log('key_input:', e.keyCode, e.type)
   socket.emit('key_input', e.keyCode, e.type)
 }
 
@@ -59,30 +50,6 @@ function Room() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [room, player_name])//TODO redo the bug at the end
 
-  const [mainBoard, setMainBoard] = useState(EmptyBoard())
-  const [secondBoard, setSecondBoard] = useState(EmptyBoard())
-  const [mainScore, setMainScore] = useState(0)
-  const [secondScore, setSecondScore] = useState(0)
-  useEffect(() => {
-    socket.on('board', (data) => {
-      //console.log('Board recv: ', data)
-      let recvBoard = Array.from(data.board, (color, id) => (
-        <div key={id} id={ '_' + id } className={color}></div>
-      ))
-      if (data.socketId === socket.id){
-        setMainBoard(recvBoard)
-        setMainScore(data.score)
-      }
-      else{
-        setSecondBoard(recvBoard)
-        setSecondScore(data.score)
-      }
-    })
-    return() =>{
-      socket.off('board')
-    }
-  }, [])
-
   const [ playerSize, setPlayerSize ] = useState(1)
   const [ isHost, setIsHoste ] = useState(true)
   const [ isWinner, setIsWinner ] = useState(null)
@@ -103,32 +70,26 @@ function Room() {
 
   if (loading)
     return <p>loading...</p>
-
+/*
+  { isWinner === true ? <p>Winner</p> : null }
+  { isWinner === false ? <p>Loser</p> : null }
+*/
 	return(
       <div className='room'>
         <h1>{room}</h1>
-        { isWinner === true ? <p>Winner</p> : null }
-        { isWinner === false ? <p>Loser</p> : null }
 
         { isHost ? <LaunchGame 
             btnStart={btnStart} 
             setBtnStart={setBtnStart}
           /> : null 
         }
-        
-        <Board status='mainBoard' board={mainBoard} />
-
-        { playerSize === 1 ?
-          <LeaderBoard/> : null
-        }
-        
-        <p>{mainScore}</p>
-        { playerSize === 2 ?
-          <p>{secondScore}</p> : null
-        }
-        { playerSize === 2 ?
-          <Board status='secondBoard' board={secondBoard} /> : null
-        }
+        <div className='playArea'>
+          <Board 
+            playerSize= {playerSize}
+            isWinner= {isWinner}
+          />
+          { playerSize === 1 ? <LeaderBoard/> : null }
+        </div>
       </div> 
 	)
 }
