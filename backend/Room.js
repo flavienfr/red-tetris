@@ -16,16 +16,6 @@ class Room{
     ServerManager.emitLeaderBoard()
   }
 
-/*
-  emitRoomInfo(){
-    this.host.socket.emit('roomInfo', {
-      playerSize: this.player_size,
-      isHost: true,
-      reset: true,
-      iswinner: null
-    })
-  }*/
-
   emitRoomInfo_2(player, ishost, reset, iswinner){
     player.socket.emit('roomInfo', {
       playerSize: this.player_size,
@@ -152,7 +142,6 @@ class Room{
         return (callback({ code: 1, msg: "The room is in game." }))
       callback({ code: 0, msg: "Succed to create room." })
 
-      //generator de piece
       const generator = new PiecesGenerator()
 
       this.emitRoomInfo_2(this.host, true, false, null)

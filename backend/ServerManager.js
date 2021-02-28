@@ -1,6 +1,7 @@
 import {ldBoard} from './models/leaderBoard'
 import Room from './Room'
 import { io } from './server'
+import { FormValidation } from './Utils'
 
 class ServerManager{
 
@@ -62,6 +63,15 @@ class ServerManager{
       })
   
       if (isRoomExist === false){
+        let res = FormValidation(data.player_name, data.room)
+        if (res !== null){
+          callback({ code: 1, msg: res,
+            playerSize: null,
+            isHost: null,
+            reset: null
+          })
+          return
+        }
         let newRoom = new Room(data.room, data.player_name, socket)
         this.rooms.push(newRoom)
         callback({ code: 0, msg: "Succed to create room.",

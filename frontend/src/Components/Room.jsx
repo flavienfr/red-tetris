@@ -4,6 +4,7 @@ import { socket } from '../App'
 import LaunchGame from './LaunchGame.jsx'
 import Board from './Board.jsx'
 import LeaderBoard from './LeaderBoard.jsx'
+import { FormValidation } from './Utils'
 
 function BackToJoinForm(code, msg, player_name, room, history){
 	const location = {
@@ -34,6 +35,7 @@ function Room() {
   const [btnStart, setBtnStart] = useState(true)
   const [loading, setLoading] = useState(true)
   useEffect(() => {
+    //TODO: check back form data
     socket.emit("join_room", { player_name, room }, (data) => {
       console.log("join_room", data)
       if (data.code === 0){

@@ -1,9 +1,9 @@
 import Button from 'react-bootstrap/Button'
 import Alert from 'react-bootstrap/Alert'
 import Form from 'react-bootstrap/Form'
-
 import { useState, useEffect } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
+import { FormValidation } from './Utils'
 
 function JoinForm(){
   const history = useHistory()
@@ -23,7 +23,9 @@ function JoinForm(){
 
   function handleSubmit(e){
     e.preventDefault();
-    history.push('/' + room + '[' + player_name + ']')
+    let res = FormValidation(player_name, room)
+    res === null ? history.push('/' + room + '[' + player_name + ']') : 
+    setAlertMsg(res)
   }
   
   return(

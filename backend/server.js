@@ -14,7 +14,7 @@ const server = require('http').Server(app)
 
 export const io = require("socket.io")(server, {
   cors: {
-    origin: "*", //TODO replace by * ? "http://localhost:3000"
+    origin: "*",
     methods: ["GET", "POST", "PUT"]
   }
 })

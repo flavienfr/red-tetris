@@ -8,5 +8,4 @@ it('set pseudo and room im form.', function() {
   expect(screen.getByText("RED TETRIS")).toBeInTheDocument()
 })
 
-
-//TODO fake join room data response
+//test form wrong pseudo et room name (empty, caractere non alpha)
